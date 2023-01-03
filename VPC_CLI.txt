@@ -1,0 +1,58 @@
+############ vpc creation using CLI ############
+1.Create a VPC with a  CIDR block
+aws ec2 create-vpc --cidr-block 172.168.0.0/16
+
+2.create a subnet with a 172.168.1.0/24 CIDR block.
+aws ec2 create-subnet --vpc-id vpc-0872872f7050d6c34 --cidr-block 172.168.1.0/24
+
+3.Create a second subnet in your VPC with a 172.168.2.0/24 CIDR block.
+aws ec2 create-subnet --vpc-id vpc-0872872f7050d6c34 --cidr-block 172.168.2.0/24
+
+4.To make your subnet a public subnet
+-------Create an Internet gateway.
+aws ec2 create-internet-gateway
+
+5.attach the Internet gateway to your VPC.
+aws ec2 attach-internet-gateway --vpc-id vpc-0872872f7050d6c34 --internet-gateway-id igw-01cae96547271f5a8
+
+6.Create a custom route table for your VPC.
+aws ec2 create-route-table --vpc-id vpc-0872872f7050d6c34
+
+7.Create a route in the route table that points all traffic (0.0.0.0/0) to the Internet gateway.
+aws ec2 create-route --route-table-id rtb-0a0e355c5c677586e --destination-cidr-block 0.0.0.0/0 --gateway-id igw-01cae96547271f5a8
+
+8.To confirm that your route has been created and is active or not.
+aws ec2 describe-route-tables --route-table-id rtb-0a0e355c5c677586e
+
+9.The route table is currently not associated with any subnet. You need to associate it with a subnet in your VPC so that traffic from that subnet is routed to the Internet gateway.
+aws ec2 describe-subnets --filters "Name=vpc-id,Values=vpc-0872872f7050d6c34" --query 'Subnets[*].{ID:SubnetId,CIDR:CidrBlock}'
+
+10.You can choose which subnet to associate with the custom route table, for example, subnet-0856c1419c9da0f58.  This subnet will be your public subnet.
+aws ec2 associate-route-table  --subnet-id subnet-0856c1419c9da0f58 --route-table-id rtb-0a0e355c5c677586e
+
+11.You can optionally modify the public IP addressing behavior of your subnet so that an instance launched into the subnet automatically receives a public IP address. Otherwise.
+aws ec2 modify-subnet-attribute --subnet-id subnet-0856c1419c9da0f58 --map-public-ip-on-launch
+
+-----To launch and connect to an instance in your public subnet
+12.Create a key pair of .pem extension
+aws ec2 create-key-pair --key-name MyKeyPair --query 'KeyMaterial' --output text > MyKeyPair.pem
+
+13.Give permission of .pem file
+chmod 400 MyKeyPair.pem
+
+14.Create a security group in your VPC, and add a rule that allows SSH access from anywhere.
+aws ec2 create-security-group --group-name SSHAccess --description "Security group for SSH access" --vpc-id vpc-0872872f7050d6c34
+aws ec2 authorize-security-group-ingress --group-id sg-00bd7ad74e8f767ab --protocol tcp --port 22 --cidr 0.0.0.0/0
+
+15.Launch an instance into your public subnet
+aws ec2 run-instances --image-id ami-0323c3dd2da7fb37d --count 1 --instance-type t2.micro --key-name MyKeyPair --security-group-ids sg-00bd7ad74e8f767ab --subnet-id subnet-0856c1419c9da0f58
+
+16.access your public instance for the following command
+ssh ec2-user@54.198.86.76 -i MyKeyPair.pem
+
+
+Dynamo_db..
+Nosql database
+highly available
+cross region replication
+millisec latency172.168.0.0/16

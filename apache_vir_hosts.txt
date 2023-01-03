@@ -1,0 +1,77 @@
+1. Update System Repositories
+
+sudo apt-get update
+2. Installing Apache on Ubuntu
+
+sudo apt-get install apache2
+apache status can be checked by running either of the following commands:
+sudo systemctl status apache2
+
+3. Create directory for websites:
+cd /var/www
+create directories for sanju.com
+sudo mkdir -p sanju.com/public_html
+
+4. Create test pages for website:
+cd /var/www/sanju.com/public_html
+sudo nano index.html
+paste code:
+<html>
+<body>
+<h1>Ohh! The sanju.com virtual host is working Fine!</h1>
+</body>
+</html>
+
+5. Creating virtual host files:
+cd /etc/apache2/sites-available/
+then copy default .conf to sanju.com.
+sudo cp 000-default.conf sanju.com.conf
+sudo nano sanju.com.conf
+
+<VirtualHost *:80>
+
+ServerAdmin webmaster@sanju.com
+ServerName sanju.com
+ServerAlias www.sanju.com
+DocumentRoot /var/www/sanju.com/public_html
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+</VirtualHost>
+
+6. Enable new virtual host files and disable the default:
+sudo a2ensite sanju.com.conf
+
+Now disable the default virtual host file.
+sudo a2dissite 000-default.conf
+sudo systemctl restart apache2(to restart your server)
+
+7. Testing virtual hosts file configuration 
+/etc/    (for linux)
+sudo nano hosts
+Add the server IP address:
+104.122.134.135 sanju.com
+
+for windows:
+C:\Windows\System32\drivers\etc\hosts
+
+
+
+
+
+
+/usr/lib/jvm/java-1.11.0-openjdk-amd64
+
+
+
+
+cd /etc/cron.daily/  ls (to show the daily logrotate)
+basically there have two logrotate utility...
+1.logrotate.d (any dir or file which you want to logrotate)
+2.logrotate.conf (this is confg file)
+/var/log (ls -l to show all files log)
+log to logrotate.d file then
+/var/log/yum.log > logrotate.log (to create the logrotate file)
+logrotate -f /etc/logrotate.conf
+sudo logrotate -d /etc/logrotate.d/httpd (rotate log command)
+

@@ -1,0 +1,325 @@
+> login to master server and install ansible
+    sudo apt update
+    sudo apt install software-properties-common
+    sudo apt-add-repository --yes --update ppa:ansible/ansible
+    sudo apt install ansible
+
+   
+   
+> login to slave server (with putty method)
+> update it: sudo apt-get update (check first if python is install then not required to install these two steps)
+> install python: sudo apt-get install python
+--------------using password--------------(adding this step in master server in host file of your slave server(if you do this step then not make keyless ssh i.e.mention below))
+[devops]
+13.89.226.6
+[devops:vars]
+ansible_ssh_user=sanju96
+ansible_ssh_pass=Sann@1234567890
+(then you go to directory /etc/ansible/  there have ansible.cnf)
+
+-----------now to make keyless ssh possible----------------
+
+> now go to master system and switch into .ssh directory: cd .ssh/
+> look for id_rsa.pub file and if it is not present then create one: ssh-keygen -t rsa
+> run commnad: cat id_rsa.pub
+> copy the code of the file.
+> Now move to slave server and switch to .ssh directory: cd .ssh
+> now edit authorize_key file: sudo nano authorized_keys
+> paste the code at the last of text inside the authorized_key file
+> now you are able to connect slave server using: ssh <ip_address> (for aws server only use this step)
+
+-----------adding slave into Host ---------
+> edit host file of ansible by command: sudo nano /etc/ansible/hosts
+> now add a group using square brackets[]: 
+  example
+  [devops]
+   slave1 ansible_ssh_host=ip address(of slave node)
+  slave1 ansible_ssh_host=<public ip of your slave server>
+> now check the connection by: ansible -m ping all.
+>command to know which software is install in your server: dpkg -l
+>update cache command: sudo apt-get --purge remove apache2 (for slave server to remove services)
+---------------playbook---------------
+now create one yaml file
+---
+
+ - hosts: slave1
+   name: play1
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install Apache
+      apt: name=apache2 state=latest
+	  
+------------------then run playbook command-----------------
+ansible-playbook file name (eg.ansible-playbook play.yaml)	
+then heat the slave ip on the browser its working fine    
+
+
+
+{
+    "Version": "2012-10-17",
+    "Id": "Policy1497423675109",
+    "Statement": [
+        {
+            "Sid": "Stmt1497423665474",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::surbobot-public-storage/*"
+        }
+    ]
+}
+
+
+
+
+ {
+    "Version": "2012-10-17",
+    "Id": "Policy1587975425956",
+    "Statement": [
+        {
+            "Sid": "Stmt1587975419541",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::278520884795:user/surbo-db"
+            },
+            "Action": [
+                "s3:DeleteObject",
+                "s3:GetObject",
+                "s3:PutObject"
+            ],
+            "Resource": "arn:aws:s3:::surbo-prod-dbbackup/*"
+        }
+    ]
+}
+
+   
+
+-----------Redis---------
+
+---
+
+ - hosts: all
+   name: redis
+   become: true
+   become_method: sudo
+   tasks:
+    - name: adding redis repo from PPA
+      apt_repository:
+        repo: ppa:chris-lea/redis-server
+    - name: install redis-server
+      apt: name=redis-server state=latest      
+
+------------mysql---------------
+---
+
+ - hosts: all
+   name: mysql
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install mysql-server
+      apt: name=mysql-server state=latest
+
+-------------rabbitmq-------------
+---
+
+ - hosts: all
+   name: rabbitmq
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install rabbitmq-server
+      apt: name=rabbitmq-server state=latest
+
+---
+
+ - hosts: all
+   name: rabbit-erlang
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install erlang-base
+      apt: name=erlang-base state=latest
+
+
+--------------mongod--------------
+---
+
+ - hosts: all
+   name: mongo
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install mongodb
+      apt: name=mongodbstate=latest
+
+----------------node----------
+
+---
+
+ - hosts: all
+   name: node
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install nodejs
+      apt: name=nodejs state=latest
+
+
+---
+
+ - hosts: all
+   name: npm
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install npm
+      apt: name=npm state=latest
+
+----------------auditd------------
+---
+
+ - hosts: all
+   name: audit
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install auditd
+      apt: name=auditd state=latest
+
+--------------composer-------------
+---
+
+ - hosts: all
+   name: compose
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install composer
+      apt: name=composer state=latest
+
+--------------supervisor----------
+
+---
+
+ - hosts: all
+   name: super
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install supervisor
+      apt: name=supervisor state=latest
+
+
+-------------PHP---------------
+---
+
+ - hosts: all
+   name: php
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install php
+      apt: name=php state=latest
+
+------------logwatch----------
+
+---
+
+ - hosts: slave1
+   name: logwatch
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install logwatch
+      apt: name=logwatch state=latest
+
+------------gdb-binaries---------------
+
+---
+
+ - hosts: slave1
+   name: gdb-binary
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install gdb
+      apt: name=gdb state=latest
+
+---------------virtualenv--------------
+---
+
+ - hosts: slave1
+   name: virtualenv
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install virtualenv
+      apt: name=virtualenv state=latest
+
+
+
+-----------CreateUser------------
+sudo ansible-vault create vault.yaml    (option: sudo ansible-vault encrypt vault.yaml)
+set password to access file
+open editor with in editor put (my_password: test)
+sudo nano user.yaml
+
+---
+- hosts: slave1
+  become: true
+  gather_facts: false
+  vars_files:
+    - vault.yaml
+  tasks:
+    - name: Create Users
+      user:
+        name: "{{ item }}"
+        password: "{{ my_password | password_hash('sha512') }}"
+        shell: /bin/bash
+
+
+
+      loop:
+        - prod_jenkins
+
+if got error run ping command(ansible-m ping all)
+
+run command (sudo ansible-playbook task.yaml --ask-vault-pass) 
+change vault file ownership sudo chown ubuntu:ubuntu vault.yaml
+--------------------------------------------------------------------------
+sudo ansible-playbook bot_app.yaml --ask-vault-pass -u ubuntu (using user)
+sudo chown -R sanjeet:sanjeet .ssh/
+ssh keygen
+
+
+
+
+ansible-playbook disable_deployment.yaml --ask-sudo-pass
+ansible-playbook disable_deployment.yaml --ask-pass
+ansible-playbook disable_deployment.yaml --ask-sudo-pass
+ansible-playbook disable_deployment.yaml --ask-become-pass
+ansible-playbook disable_deployment.yaml --ask-become-pass
+ansible-playbook enable_deployment.yaml --ask-become-pass
+ansible-playbook disable_deployment.yaml --ask-become-pass
+ansible-playbook enable_deployment.yaml --ask-become-pass 
+
+Jenkins-Execute-Shell
+ansible-playbook /etc/ansible/cis-ubuntu-cron.yml -e "ansible_become_password=Sann@96#"
+ansible-playbook /etc/ansible/$playbook_name -e "ansible_become_user=surboroot" -e "ansible_become_pass=$root123" --limit $env
+
+ansible-playbook -c local -i 'localhost,' playbook.yml
+ansible-playbook -c local -i 'localhost,' playbook.yml -K
+echo 'jenkins ALL=(ALL) ALL' >> /etc/sudoers
+
+ansible-playbook cis-ubuntu-cron.yaml --syntax-check
+
+ansible-playbook -C cis-ubuntu-cron.yaml  
+
+
+
+
+
+
+
