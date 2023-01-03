@@ -1,0 +1,40 @@
+cd /home/vinay/
+genericapiapplication.war
+cd /opt/tomcat/webapps/
+cp /home/vinay/genericapiapplication.war .
+/opt/tomcat/logs# tail -f catalina.out
+
+
+
+
+
+select * from _tbl_couponcode_master limit 1;
+select * from _tbl_couponcode_master where status=1;
+select * from _tbl_morequest_details order by 1 desc limit 5;
+select response_code,count(*) from _tbl_smsend_details where date(CreateDate)='2021-10-01' group by 1;
+
+mysql_user : godrej
+Password : God#129Srbo4
+mysql -upampersp -pPsd#048Er@9kj pampers_premium
+mysql root password:root/suR005#MyG01
+
+
+
+restart jar file
+first grep jar process 
+ps -aef |grep jar
+
+nohup then process
+nohup java -cp /godrej_camp/h2h_lib/mysql-connector-java-5.1.14-bin.jar:/godrej_camp/h2h_lib/log4j-1.2.15.jar:/godrej_camp/h2h_lib/commons-lang3-3.10.jar:/godrej_camp/h2h_lib/refleions-0.9.12.jar:/godrej_camp/h2h_lib/httpcore-4.4.12.jar:/godrej_camp/h2h_lib/httpclient-4.5.10.jar:/godrej_camp/h2h_lib/commons-logging-1.2.jar:/godrej_camp/h2h_lib/commons-codec-1.11.jar:/godrej_camp/h2h_lib/jackson-databind-2.2.3.jar:/godrej_camp/h2h_lib/jackson-core-2.2.3.jar:/godrej_camp/h2h_lib/jackson-annotations-2.2.3.jar:/godrej_camp/gcplcampaignapplication-0.0.1-SNAPSHOT.jar com.app.gcpl.controller.SmsController codePicker &
+
+
+curl 'http://localhost:6798/gcplreports/RequestController?action=reload'
+curl 'http://localhost:6798/gcplreports/RequestController?action=gcplreports&startDate=2021-02-01&endDate=2021-02-12'
+curl 'http://localhost:6798/gcplreports/RequestController?action=gcplreports'
+
+
+
+
+mysql -upampersp -pPsd#048Er@9kj pampers_premium
+​SRP7056$oR78
+

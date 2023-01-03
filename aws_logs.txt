@@ -1,0 +1,76 @@
+#!/bin/bash
+date=`date --date= +%Y%m%d`
+ldate=`date -d "1 days ago" +"%Y%m%d"`
+ldtmnth=`date -d "1 days ago" +"%m"`
+curmnth=`date --date= +%m`
+myear=`date -d "1 days ago" +"%b-%Y"`
+log_file=/script/logs_on_aws/aws_logs.txt
+
+echo $date
+echo $curmnth
+
+echo "------------------------------------Prod-1 Logs Copied on AWS Bucket $date ------------------------------------" > $log_file
+echo " " >> $log_file
+echo "#####----------------------------------------##Dashboard Logs##------------------------------------------------#####" >> $log_file
+echo "##-->FILENAME : /app-log/dashboard/common.log-$date.gz" >> $log_file
+aws s3 cp /app-log/dashboard/common.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/dashboard/ >> $log_file
+echo "##-->FILENAME : /app-log/dashboard/app.log-$date.gz" >> $log_file
+aws s3 cp /app-log/dashboard/app.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/dashboard/ >> $log_file
+echo "##-->FILENAME : /app-log/dashboard/model.log-$date.gz" >> $log_file
+aws s3 cp /app-log/dashboard/model.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/dashboard/ >> $log_file
+echo "##-->FILENAME : /app-log/dashboard/access.log-$date.gz" >> $log_file
+aws s3 cp /app-log/dashboard/access.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/dashboard/ >> $log_file
+echo "##-->FILENAME : /app-log/dashboard/error.log-$date.gz" >> $log_file
+aws s3 cp /app-log/dashboard/error.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/dashboard/ >> $log_file
+
+echo "-----------------------##Dashboard -Campaign Logs##--------------------------" >> $log_file
+echo "##-->FILENAME : /app-log/dashboard/campaign/opt.campaign_processor_worker_1.log-$date.gz" >> $log_file
+aws s3 cp /app-log/dashboard/campaign/opt.campaign_processor_worker_1.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/dashboard/campaign/ >> $log_file
+echo "----------------------##DashBoard -acknowledge_message Logs##-------------" >> $log_file
+aws s3 cp /app-log/dashboard/acknowledge_message/opt.campaign_processor_worker_1.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/dashboard/acknowledge_message/ >> $log_file
+
+echo "---------------------------------------------------#Celery#------------------------------------------------" >>$log_file
+aws s3 cp /app-log/celery/celery-access.log.2.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/celery/$ldtmnth/celery-access.log.$ldate.gz >> $log_file
+aws s3 cp /app-log/celery/chatapi-celery-access.log.2.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/celery/$ldtmnth/chatapi-celery-access.log.$ldate.gz >> $log_file
+aws s3 cp /app-log/celery/celerybeat-access.log.2.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/celery/celerybeat-access.log.$ldate.gz >> $log_file
+aws s3 cp /app-log/celery/celerybeat.log.2.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/celery/celerybeat.log.$ldate.gz >> $log_file
+aws s3 cp /app-log/celery/celery.log.2.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/celery/celery.log.$ldate.gz >> $log_file
+aws s3 cp /app-log/celery/chatapi_celery.log.2.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/celery/chatapi_celery.log.$ldate.gz >> $log_file
+
+echo "#---------------------------------------------------#Channels#------------------------------------------------#" >> $log_file
+aws s3 cp /app-log/channels/app.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/ >> $log_file
+aws s3 cp /app-log/channels/error.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/ >> $log_file
+aws s3 cp /app-log/channels/access.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/ >> $log_file
+aws s3 cp /app-log/channels/whatsapp/app.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/whatsapp/ >> $log_file
+aws s3 cp /app-log/channels/twitter/app.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/twitter/ >> $log_file
+aws s3 cp /app-log/channels/telegram/app.log-$ldate.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/telegram/ >> $log_file
+aws s3 cp /app-log/channels/helpers/app.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/helpers/ >> $log_file
+aws s3 cp /app-log/channels/facebook/app.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/facebook/$curmnth/ >> $log_file
+aws s3 cp /app-log/channels/slack/app.log-$ldate.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/slack/ >> $log_file
+aws s3 cp /app-log/channels/zendesk/app.log-$ldate.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/zendesk/ >> $log_file
+aws s3 cp /app-log/channels/freshdesk/app.log-$ldate.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/freshdesk/ >> $log_file
+aws s3 cp /app-log/channels/gmail/app.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/channels/gmail/ >> $log_file
+
+echo "#####-------------------------------------------##Chatbot-API Logs##---------------------------------------------#####" >> $log_file
+echo "##-->FILENAME : "/app-log/chatbot_api/app.log-$date.gz >> $log_file
+aws s3 cp /app-log/chatbot_api/app.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/chatbot_api/ >> $log_file
+echo "##-->FILENAME : "/app-log/chatbot_api/error.log-$date.gz >> $log_file
+aws s3 cp /app-log/chatbot_api/error.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/chatbot_api/ >> $log_file
+echo "##-->FILENAME : "/app-log/chatbot_api/access.log-$date.gz >> $log_file
+aws s3 cp /app-log/chatbot_api/access.log-$date.gz s3://surbo-prod-application-logs/app-1/app-log/$myear/chatbot_api/ >> $log_file
+
+echo "-----------------------------Prod-1 Logs Copied Successfully ---------------------------------------" >> $log_file
+echo " " >> $log_file
+
+echo "---------------------------------------------------#Nginx#------------------------------------------------" >>$log_file
+aws s3 cp /var/log/nginx/chatbot-access.log.2.gz s3://surbo-prod-application-logs/app-1/nginx/$myear/chatbot-access.log.$ldate.gz >> $log_file
+aws s3 cp /var/log/nginx/dashboard-access.log.2.gz s3://surbo-prod-application-logs/app-1/nginx/$myear/dashboard-access.log.$ldate.gz >> $log_file
+aws s3 cp /var/log/nginx/dashboard-http-access.log.2.gz s3://surbo-prod-application-logs/app-1/nginx/$myear/dashboard-http-access.log.$ldate.gz >> $log_file
+aws s3 cp /var/log/nginx/dashboard-http-error.log.2.gz s3://surbo-prod-application-logs/app-1/nginx/$myear/dashboard-http-error.log.$ldate.gz >> $log_file
+aws s3 cp /var/log/nginx/access.log.2.gz s3://surbo-prod-application-logs/app-1/nginx/$myear/access.log.$ldate.gz >> $log_file
+aws s3 cp /var/log/nginx/chatbot-error.log.2.gz s3://surbo-prod-application-logs/app-1/nginx/$myear/chatbot-error.log.$ldate.gz >> $log_file
+
+echo "Logs Copied on Aws, app-1 directory for Prod-1 Server" |/usr/bin/mail -s "Prod-1 Logs copied on surbo-prod-application-logs Aws Bucket" devops.surbo@vfirst.com -a 'From: logs@vfirst.com'
+#cat $log_file |/usr/bin/mail -s "Prod-1 Logs copied on Aws Bucket" devops.surbo@vfirst.com -a 'From: monitor@vfirst.com'
+
+

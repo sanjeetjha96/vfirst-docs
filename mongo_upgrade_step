@@ -1,0 +1,56 @@
+$ '
+sudo systemctl stop mongod
+
+$ wget -qO - https://www.mongodb.org/static/pgp/server-4.0.asc | sudo apt-key add -
+
+$ echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+
+$ sudo apt-get update &&sudo apt-get install -y mongodb-org=4.4.11 mongodb-org-server=4.4.11 mongodb-org-shell=4.4.11 mongodb-org-mongos=4.4.11 mongodb-org-tools=4.4.11
+
+$ sudo systemctl start mongod
+$ mongo --version
+$ mongo --host 192.168.10.4 --port 18709 -u "admin1" -p "suRb05MnG01" --authenticationDatabase "admin"
+
+use admin
+db.adminCommand( { setFeatureCompatibilityVersion: "4.2" } )
+db.adminCommand( { getParameter: 1, featureCompatibilityVersion: 1 } )
+
+
+Create User
+
+use surbo_ace
+
+db.getCollection("test").insert({ "__v": NumberInt("0"), "status": true })
+
+db.createUser( { user: "surboace", pwd: "B8!nt@531$Cw#", roles: [ { role: "dbOwner", db: "surbo_ace" } ] })
+
+db.createUser({user: "botthirdread", pwd: "Rt!T124@WwK)23", roles: [ { role: "read", db: "bot_thirdparty" } ]});
+
+
+cfg = rs.conf()
+cfg.members[1].priority = 0
+rs.reconfig(cfg)
+
+
+db.createUser({user: "admin",pwd: "B8!nt@531$Cw#",roles: [ { role: "root", db: "admin"},{ role: "userAdminAnyDatabase", db: "admin" } ]})
+
+mongo --host 172.31.1.5 --port 27017 -u "admin" -p --authenticationDatabase "admin"
+
+db.createUser({user: "admin",pwd: "admin1",roles: [ { role: "root", db: "admin"},{ role: "userAdminAnyDatabase", db: "admin" } ]})
+
+
+rs.add("172.31.82.28:27017")
+
+surbo-prod:PRIMARY> db.lead_histories.count()
+117817
+
+
+
+
+
+db.grantRolesToUser(
+    "botplatform",
+    [
+      { role: "dbOwner", db: "botplatform_alert" }
+    ]
+)

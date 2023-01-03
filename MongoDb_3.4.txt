@@ -1,0 +1,201 @@
+-------------------------------- first install MongoDb 3.4 in both node master & slave ---------------------------------
+
+1. Import MongoDB public GPG Key:
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+
+2. Create a List File for MongoDB as a Repository
+echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+
+3. Install MongoDB 3.4 on Ubuntu 18.04 / Ubuntu
+sudo apt update
+sudo apt install -y mongodb-org
+
+4 . Start MongoDB
+sudo systemctl start mongod
+
+5. Check MongoDB status
+sudo systemctl status mongod
+
+6. Next, enable automatic starting at boot time:
+sudo systemctl enable mongod
+
+7. The service should be listening on port 2291
+netstat -tunelp | grep 2291     or netstat -pllnet
+
+8. now also check MongoDB main configuration file is /etc/mongod.conf
+
+9. now go to master node
+then go to sudo vi /etc/hosts file
+paste slave node ip & correct slave node hostname
+e.g 13.127.157.89 MangoSlave01
+
+10. Configure MongoDB Replication part still processing
+--------------------------installation of mongo 4.0--------------------------
+
+wget -qO - https://www.mongodb.org/static/pgp/server-4.0.asc | sudo apt-key add -
+
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+
+sudo apt update
+sudo apt install -y mongodb-org
+sudo systemctl enable mongod
+sudo systemctl start mongod
+sudo systemctl status mongod
+
+
+
+
+db.createUser( {
+    user: "RootAdmin",
+    pwd: "sanjeet",
+    roles: [ { role: "root", db: "admin" } ]
+  });
+
+
+
+
+
+rs.stepDown()
+db.getMongo().setSlaveOk()
+
+
+
+
+
+# network interfaces
+net:
+  port: 27017
+  bindIp: 172.31.21.68,127.0.0.1
+
+
+# how the process runs
+processManagement:
+  timeZoneInfo: /usr/share/zoneinfo
+
+#security:
+security:
+  authorization: "enabled"
+  keyFile: "/opt/mongodb/mongo.key"
+#operationProfiling:
+
+#replication:
+replication:
+  replSetName: "app1"
+
+
+
+
+telnet 3.90.245.18 27017
+use admin
+db.createUser({user: "admin",pwd: "sanjeet@12345",roles: [ { role: "root", db: "admin"},{ role: "userAdminAnyDatabase", db: "admin" } ]})
+mongo  --host 172.31.76.241 --port 27017 -u "admin" -p "sanjeet@12345" --authenticationDatabase "admin"
+
+
+
+
+    
+
+
+Use admin
+db.createUser({​​​​​user: "admin",pwd: "suRb05MnG01",roles: [ {​​​​​ role: "root", db: "admin"}​​​​​,{​​​​​ role: "userAdminAnyDatabase", db: "admin" }​​​​​ ]}​​​​​)
+use botplatform
+db.createUser( {​​​​​ user: "botplatform", pwd: "Tm01!m9Cr1c)2", roles: [ {​​​​​ role: "clusterMonitor", db: "admin"}​​​​​,{​​​​​ role: "dbOwner", db: "botplatform" }​​​​​ ] }​​​​​)   (after create user and db by this command then switch to this db using command (use botplatform)then again heat this command to insert user & db then login using this db & user)
+
+
+
+
+
+​[18:03] Sunny Chourasia
+    
+for (var i = 1; i <= 25; i++) {​​​​​db.testData.insert( {​​​​​ x : i }​​​​​ )}​​​​​
+​[18:03] Sunny Chourasia
+    
+Insert bulk data
+​[18:04] Sunny Chourasia
+    
+
+
+insert query
+db.getCollection("hotel_module").insert({​​​​​
+"__v": NumberInt("0"),
+"addBy": ObjectId("5c30df8c4fab6913ecadc63b"),
+"addDate": ISODate("2019-08-07T07:31:26.511Z"),
+"hotelId": ObjectId("5d7a0481e95982440410127e"),
+"iconImage1": "1567426381281_74.png",
+"iconImage2": "1567426381281_75.png",
+"modBy": ObjectId("5c30df8c4fab6913ecadc63b"),
+"modDate": ISODate("2019-09-02T12:13:07.989Z"),
+"name": "Food",
+"sortOrder": NumberInt("4"),
+"status": true
+}​​​​​)
+db.getCollection("test").insert({​​​​​
+"sortOrder": NumberInt("4"),
+"status": true
+}​​​​​)
+
+ 
+​[18:04] Sunny Chourasia
+    
+
+
+remove query
+db.hotel_module.remove( {​​​​​ _id: ObjectId("5ecf7b014c449f3f30cc57a2") }​​​​​ );
+
+total count
+db.hotel_checkin.count()
+
+ 
+​[18:05] Sunny Chourasia
+    
+
+
+Select Query
+db.master_tourist.find({​​​​​}​​​​​).projection({​​​​​_id:0,email:1}​​​​​).sort({​​​​​ _id: -1 }​​​​​).limit(1000);
+
+DB Query
+DBQuery.shellBatchSize = 300
+
+Count ()
+db.master_tourist.count({​​​​​}​​​​​);
+
+ 
+
+
+
+
+
+
+
+
+
+
+show users;
+
+"_id" : "botplatform.bsesrepo",
+"userId" : UUID("5e6a6f4b-3848-4fdb-b910-fe25fdb95d98"),
+"user" : "bsesrepo",
+"db" : "botplatform",
+"roles" : [
+{
+"role" : "read",
+"db" : "botplatform"
+}
+
+
+
+
+
+
+
+
+
+
+
+mongo 172.31.0.30:17901/botplatform -u botplatform -p (command to connect particular db)
+
+show collections (To show collections)
+db.system.users.find() (to show table data)
+netstat -tulpn | grep LISTEN
+lsof -i -P -n | grep LISTEN|grep -i "udp"
+

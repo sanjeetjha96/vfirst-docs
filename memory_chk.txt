@@ -1,0 +1,12 @@
+#/usr/local/nagios/libexec/check_mem_proc -w 10 -c 20 > /script/monitor_script/memory_log/memory_`\/bin\/date +\%Y\%m\%d`.log 
+echo "`\/bin\/date +%Y-%m-%d" "%T` | `/usr/local/nagios/libexec/check_mem_proc -w 18 -c 20` ">>/script/monitor_script/memory_log/memory_`\/bin\/date +\%Y\%m\%d`.log
+output=`/usr/local/nagios/libexec/check_mem_proc -w 18 -c 20|cut -d":" -f1`
+#output="warning"
+if [ $output != "ok" ]
+then
+process_id=`/usr/local/nagios/libexec/check_mem_proc -w 18 -c 20|awk '{print $5}'|cut -d"=" -f2`
+ps -ef|grep -i "$process_id"|grep -v "grep" >> /script/monitor_script/memory_log/memory_`\/bin\/date +\%Y\%m\%d`.log
+webhook_alert "Memory Issue Prod App-1: `/usr/local/nagios/libexec/check_mem_proc -w 18 -c 20`"
+fi
+#echo $output
+

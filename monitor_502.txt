@@ -1,0 +1,36 @@
+#!/bin/bash
+file=$1
+
+email_file='/script/monitor_script/email.log'
+error_file="/script/monitor_script/errorcounts_$1.log"
+#echo $error_file
+last_min=`date --date '-1 min' '+%Y-%m-%dT%R'`
+#$echo $last_min
+error=`cat /var/log/nginx/$file-access.log|grep -i "$last_min"|awk '{print $6}'|cut -d"=" -f2|grep -e "500" -e "502" -e "503" -e "504" > $error_file`
+error_count=`cat $error_file|wc -l`
+
+error500=`cat $error_file|grep -wc "500"`
+error502=`cat $error_file|grep -wc "502"`
+error503=`cat $error_file|grep -wc "503"`
+error504=`cat $error_file|grep -wc "504"`
+#error503=`cat $error_file|grep -wc "200"`
+#error_count=`tail -100 /var/log/nginx/$file-access.log|awk '{print $6}'|cut -d"=" -f2|grep -e "502" -e "503" -e "502"|wc -l`
+        if [ $error_count -gt 10 ]
+          then
+                currenttime=`date +%Y-%m-%d" "%T`
+                sendSMS "Prod -1 getting error 500/502/503 ($error_count) in $file-access.log. time -$currenttime"
+		webhook_alert "Prod -1 getting error 500/502/503 ($error_count) in $file-access.log. time -$currenttime"
+                echo "-----------------------------------------Prod 1----------------------------------" > $email_file
+                echo "" >>$email_file
+ #               echo " Getting Error 500/502/503 in /var/log/nginx/$file-access.log file." >> $email_file
+                echo "Found 500 - $error500 , 502 - $error502 , 503 - $error503 , 504 - $error504 counts in last 1 minute.Log file - $file-access.log" >> $email_file
+                cat $email_file|/usr/bin/mail -s "Surbo BOT|India Problem Alert - $currenttime" dev-surbo@vfirst.com -a 'From: monitor.502@vfirst.com'
+
+
+      # echo "Prod 4"|/usr/bin/mail -s "Nginx Error-$currenttime" dev-surbo@vfirst.com -a 'From: monitor.502@vfirst.com'
+          else
+                        currenttime=`date +%Y-%m-%d" "%T`
+                  echo "$currenttime | Not found 502/503 in $file-access.log file" >>/script/monitor_script/502.log
+
+        fi
+

@@ -1,0 +1,233 @@
+User name: Sanjeet.Jha@vfirst.com
+Password:
+zxcv@1234$   Update Sann@96#
+vpn user_name sanjeet.jha
+password Zxcv@1234$
+Hrms_pass 1540@123
+Ovpn Pass: arf8N8hl8p04wNB21002
+Grafana URL
+ http://uat-grafana.surbo.io/
+username: admin
+password: grafana@2018                 
+
+1. Aws Console Cred
+Trial-SAAS-Account
+Id : 278520884795                                port - 1791
+User : sanjeetjha
+Pass : Sann@2596#,Twd#hHB8LVd
+access_key:  AKIAUBWJDNY5RG6LCSGR
+seceret_key: Ar60JUBMxYCZF/bCBdaiPgEZFPKV1NnyvaD/uv2X
+
+2. Prod Account
+Id : 018104023321                               port - 2291
+User : sanjeetjha
+Pass : Twd#hHB8LV,S0wd#hHB8DL
+
+3. Frankfurt-Account
+Id : 935890467856
+User : sanjeetjha
+pass : Sann@2596#,
+
+4. Infinito-Account
+Id : 250571059530
+User : sanjeet.jha
+Pass : Sann@2596#,Twd#hHB8LV$#
+
+Azure:
+Username: sasadmin@vfirst.com
+Password: Cuh67630
+
+Egolu@_0823  
+
+new VPN password: Cap199028                                 new pass 98012196       update pass asdf1234   
+
+hostnamectl set-hostname vl3128243-infinito-qa-btsup-surbo-aws-mum-in-vf.surbo.io
+
+
+- alert: ZookeeperNotOk
+  expr: zk_ruok == 0
+  for: 3m
+  labels:
+    severity: warning
+  annotations:
+    summary: Zookeeper Not Ok (instance {{ $labels.instance }})
+    description: "Zookeeper instance is not ok\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmFyPyAPe4IwuWaZufQ6u9EO9fuiKmazq6duAiklxb                                                                                        zimBbFpNT/34ixwe0QE+0/qJWEQuVxvv1HPu1xGiMyqYtFc1sHzjqI6AYIotZVp85M5Sx3qcgs5/iwaU                                                                                        MrlcRNtlLpHwbYCHoLy2g2RKCWhJ3BRwURs+smsdApMi0Uapcs4PNOul5IVw/FfeL5j2JGw+Pxy0LDDF                                                                                        Y4iZgsamlss5F3pFpJRBTTRHGX8wH4PdqnMjDPODMl2/tD4OSP+Wbl2Ub3ZQe3ITN0kVD6CJ7vW2/LMC                                                                                        giGYefJRN8SkrRrxsn541yZEPhpSoZDwleak0BbGJoyNXq81i9LvyGy1EiR3 sanjeet-key
+
+172.31.10.9 squid1.surbo.io
+#172.31.1.2 squid1.surbo.io
+
+
+mongo_01082020-000001.tar.gz
+mongo_01082020-000001.tar.gz
+mongo_31082020-000001.tar.gz
+cL0gd#D8v9w0g1n
+
+
+pahle hm koi hosting website se domain purchase kiye sath me wha host kr diye us domain ko publically uske bad hm wo domain ko jis ip se associate krna hoga jis server pe chal rhi application ke liye hme y domain bnayi hai us ser ki public ip ko sath sath host file me entry kr denge ab ye domain hai is server pe khojega ki kis webserver pe y domain hai jis webserver 
+
+node version 12
+curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
+sudo apt install nodejs
+
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+apt update
+sudo apt-get install -y nodejs
+
+curl -sL https://deb.nodesource.com/setup_16.x | sudo bash -
+apt update
+sudo apt-get install -y nodejs
+
+add-apt-repository ppa:ondrej/nginx
+apt update
+apt-get install nginx
+
+PYTHON3.8
+add-apt-repository ppa:deadsnakes/ppa
+apt update
+apt-get install python3.8
+
+cd /usr/lib/python3.8/distutils
+command folder is there or not -- please check.
+if not then install - sudo apt install python3.8-distutils 
+
+
+a2enmod proxy_http
+a2enmod ssl
+
+
+329fce5ab18585154a8bfeeb7dee888ea2da5c7be40b6ddffa327ffba8db8712
+daf14e6db0e2a1bacb97166a97337df1762f88753eb40a159310a35f094d22ab
+dd893d0d9ea225eebb1676b5997fc09d2e53a2c0215ede8a3c78835b89f2640d
+e30dde731ae0e3f85bc8e8c19287390a0a6a477d220eb02d6f43863230bbbb56
+8d28e5188b8c4901170f89e5223dd728f5da9bcbf1685ef6759cb47a473c8f42
+ddc8387089e102fae87d2a66017b1d5ce45014152391d44e29c727d7ef713e3b
+
+
+openssl s_client -servername qabot.surbo.io -connect qabot.surbo.io:443 2>/dev/null | openssl x509 -noout -dates
+
+curl --location --request GET 'http://mewpapi.surbo.io/match_query/?param1=hi&param2=hello&param3=qwq&first_message=hello'
+
+
+e30dde731ae0e3f85bc8e8c19287390a0a6a477d220eb02d6f43863230bbbb56-json.log
+37f20dab144fe6e2695a7bd125542135cfe54786ba79f94be2f2c3aaf6a38b07-json.log
+329fce5ab18585154a8bfeeb7dee888ea2da5c7be40b6ddffa327ffba8db8712-json.log
+7cc9f49316da30101a0a885f582b17538291750d6c898424d36058e039e28c6f-json.log
+daf14e6db0e2a1bacb97166a97337df1762f88753eb40a159310a35f094d22ab-json.log
+dd893d0d9ea225eebb1676b5997fc09d2e53a2c0215ede8a3c78835b89f2640d-json.log
+8d28e5188b8c4901170f89e5223dd728f5da9bcbf1685ef6759cb47a473c8f42-json.log
+ddc8387089e102fae87d2a66017b1d5ce45014152391d44e29c727d7ef713e3b-json.log
+24810+20500+4620+7770+7300+2920+1700+9851+850+650+10581+650+300+250+447+579+10571=93118
+
+
+
+
+172.31.16.251
+
+
+
+
+rabbitmqctl cluster_status
+
+
+
+
+PS3FR9!0cH3E$1
+
+
+
+
+
+
+https://valuefirst.webhook.office.com/webhookb2/0d13cb5f-c4b1-4674-899b-749a7820c5b8@dd58fdca-ddf7-4ca1-b5a4-e3a1d6e19191/IncomingWebhook/eb8d2aebcbd645a7b5910249e477755d/e189d7f5-cfa4-4e76-af6d-4062a4431691
+
+
+199.228.169.36 (cgw-019b125e66c6995dc)
+207.37.203.4 (cgw-09dad80929a880f73)
+
+
+usermod -aG devgroup-log raj.kumar
+​setfacl -Rm g:devgroup-log:rwx /app-log/
+
+chmod g+s /app
+addgroup devgroup-dev
+setfacl -Rm g:devgroup-dev:rx /applog
+usermod -aG devgroup-log gaurav.pant
+usermod -G www-data,devgroup-log,adm gaurav.pant
+usermod -G www-data,devgroup-log,adm aditya.gupta
+usermod -G www-data,devgroup-log,adm amit.saini
+usermod -G www-data,devgroup-log,adm naveen.agarwal
+usermod -G www-data,devgroup-log,adm dheeraj.saini
+usermod -G www-data,devgroup-log,adm sushma.yadav
+
+
+setfacl -Rm g:devgroup-dev:rx /var/log/nginx
+pip install pip==20.0.2
+​pip install setuptools==57.5.0
+bot/channel/chatbot_api
+​UAT env: 172.31.30.12
+UAT env: 172.31.22.128
+​install requirement: --> pip install pip==20.0.2
+​cd /opt/apps/.virtualenv/
+​source bot/bin/activate
+​pip install pip==20.0.2
+pip install setuptools==57.5.0
+
+
+icici blue chip
+axis focus 25fund
+paragparikh flexi cap
+
+
+grep -r "AKIAQINYVPEMRPPPCO5X" * .[^.]*
+
+remove content in vi editor(gg then d then shift g)
+copy & paste line in vi editor(yy then p)
+
+dpkg --list |grep php7.4 |awk '{print $2}'
+
+/var/www/infinito.botsup.api/shared/logs
+
+
+
+
+
+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
+
+nano ~/. bashrc
+source bashrc
+
+alias gst='git status'
+alias gb='git branch'
+alias gateway='sshpass -pcL0gd#D8v9w0g1n ssh -p 2291 sanjeet@3.6.52.8'
+alias ipa='sshpass -pSann@123# ssh -p 2291 sanjeet.jha@172.31.20.251'
+alias qa='sudo ssh -p 1791 -i sanjeet-key.pem sanjeet@35.154.82.161'
+alias idvpn='globalprotect connect --portal 103.148.190.116'
+
+
+
+ps -aef |grep chatbot_api_v2
+lsof -np 23433|wc -l 
+lsof -np 23433|grep -i "5392"
+
+
+
+pmta show topq
+pmta list --queue=gmail.com/promo.live_2929
+
+add-apt-repository ppa:deadsnakes/ppa
+apt update
+apt-get install python3.8
+cd /usr/lib/python3.8/distutils
+command folder is there or not -- please check.
+if not then install - sudo apt install python3.8-distutils
+
+apt install chrony 
+vim /etc/chrony/chrony.conf 
+server 169.254.169.123 prefer iburst minpoll 4 maxpoll 4 
+systemctl restart chrony 
+systemctl enable chrony 
+date 
+timedatectl 
+

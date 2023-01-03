@@ -1,0 +1,29 @@
+#supervisor | server health | disk space check
+*/1 * * * *  sh /script/monitor_script/supervisor_monitor.sh prod-server-1 https://bothealth.surbo.io >> /var/log/monitor_log/monitor_script_`\/bin\/date +\%Y\%m\%d`.log
+#*/5 * * * * /home/deb/memory_usage.sh
+* * * * * sh /script/monitor_script/monitor_502.sh dashboard >>/dev/null 2>&1
+* * * * * sh /script/monitor_script/monitor_502.sh chatbot >>/dev/null 2>&1
+#*/1 * * * * sh /script/monitor_script/monitor_error.sh >>/dev/null 2>&1
+25 07 * * *  sh  /script/logs_on_aws/aws_logs.sh >>/dev/null 2>&1
+30 07 * * * sh  /script/logs_on_aws/server_logs.sh >>/dev/null 2>&1
+#--------------------Failure Attempts -------------->
+*/15 * * * * sh /script/monitor_script/failure_alert.sh PROD-1 >> /dev/null 2>&1
+01 00 01 * * sh /script/monitor_script/upgrade_scripts.sh PROD-1 >> /dev/null 2>&1
+#####restart timeout service######
+#00 18 * * * supervisorctl restart timeout_service
+#*/15 * * * * supervisorctl restart celeryd
+#*/15 * * * * supervisorctl restart chatapi_celeryd 
+
+###Check memory status
+*/2 * * * * sh /script/monitor_script/check_memory.sh
+*/2 * * * * sh /script/monitor_script/memo_chk.sh >> /dev/null 2>&1
+* */3 * * * sh /script/monitor_script/memory_kill.sh >> /dev/null 2>&1
+#campaign engine check
+###*/2 * * * *  sh /script/monitor_script/campaign_engine_alert.sh >> /dev/null 2>&1
+
+
+#Mysql Backup
+#0 0 * * * /scripts/chat-db-backup-s3.sh >>/dev/null 2>&1
+01 00 * * * sh /script/db_bkp_script/mysql_scripts.sh >>/dev/null 2>&1
+00 00 * * * sh /script/db_bkp_script/mongo_backup.sh >>/dev/null 2>&1
+

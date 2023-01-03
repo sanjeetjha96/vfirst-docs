@@ -1,0 +1,62 @@
+REDIS UPGRADE
+cp /etc/redis/redis.conf /tmp
+Check data directory
+Redis-cli > CONFIG get dir 
+redis-cli > SAVE
+cp /var/lib/redis/dump.rdb /tmp/
+add-apt-repository ppa:chris-lea/redis-server
+apt-get update
+cp /tmp/redis.conf /etc/redis/redis.conf
+cp /tmp/dump.rdb /var/lib/redis/
+
+Permission
+-rw-r----- 1 redis redis 81K Jun 12 08:33 redis.conf
+
+-rw-rw---- 1 redis redis 334K Jul  7 15:08 dump.rdb
+
+systemctl start redis-server
+systemctl status redis-server
+
+
+
+------------------Installation----------------------
+# add-apt-repository ppa:chris-lea/redis-server
+# apt-get update
+# apt-get install redis-server
+# systemctl restart redis-server
+# change default port
+# 6389 to 7817
+
+REDIS - 6.2.6
+sudo add-apt-repository ppa:redislabs/redis
+sudo apt-get update
+sudo apt-get install redis-server
+
+redis-cli ping
+
+
+redis-cli -h 172.31.31.159 -p 7817
+
+Redis-conf-parameter:
+rename-command FLUSHALL "cc15f59dt127be6c52"
+rename-command FLUSHDB  "cc02d59dt127beb840f"
+rename-command DEBUG "9dt127bc15f5b840"
+rename-command SHUTDOWN SHUTDOWN_MENOT
+rename-command CONFIG ASC12_CONFIG
+
+------backend---------
+nestjs framework
+npm run build
+/dist                  #src for coding
+then commit
+git tag ""
+git push
+
+requirepass ace-redis@UAT2#@!
+ace-redis@PR0D2#@!
+
+user prod-id-surbo-redis allcommands allkeys allchannels on >surID23vf$B20D4!
+
+redis-cli -u redis://botsup-qa-redis:'botSuP24vf$QA1!'@172.31.5.116:6389
+
+

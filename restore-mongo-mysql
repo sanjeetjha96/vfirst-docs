@@ -1,0 +1,96 @@
+run command on gateway server from copy data of Uae-Db
+scp -P 2291 sanjeet@5.195.194.84:/database-backup/mongo/bot_07012021-000001.tar.gz .
+scp -P 2291 sanjeet@5.195.194.84:/database-backup/mysql/*_20210106.sql.gz .
+
+then move these data to deploy server whwere we have restore
+scp *.gz ubuntu@65.0.185.73:/home/ubuntu/uae
+-------------------mongo restore----------------------
+then untar mongo dump file
+tar -xzf bot_07012021-000001.tar.gz
+then go to directory 
+/uae/bot_07012021-000001
+then ls
+botplatform (these are database name)
+
+then rename database name botplatform to botplatform_uae
+mv botplatform/ botplatform_uae
+--------restore database-----------
+go to directory /home/ubuntu/uae
+mongorestore bot_07012021-000001
+
+then enter mongo database
+show dbs
+use dbs_name
+show collections
+
+mongo backup:
+mongodump --port=17701  --out /tmp/mongo_7oct
+mongodump --forceTableScan --port=17701 --out /tmp/mongo_8oct
+
+-----------------Mysql-restore---------------
+unzip backup file
+gunzip surboace_20210106.sql.gz
+
+then create database in mysql if not exist or required
+create database surboace_uae;
+exit
+---------------mysql restore-------------
+mysql -uroot -p then enter db_name < then db which you have to restore
+eg) mysql -uroot -p surboace_uae < surboace_20210106.sql
+
+
+
+
+
+
+
+
+from local to gateway server scp
+scp -P 2291 botsup_11012021-000001.tar.gz sanjeet@3.6.52.8:/home/sanjeet/
+scp -P 2291 /home/sanjeetjha/Downloads/ticket_detail.php sanjeet@3.6.52.8:/home/sanjeet/
+run on gateway to copy file in aceprod1
+scp /home/sanjeet/ticket_detail.php sanjeet@172.31.21.84:/home/sanjeet/
+
+
+copy data through s3 bucket using access n secret key
+aws s3 cp s3://surbo-prod-dbs-backup/backups/mongo/mongo_19042021-000001.tar.gz .
+
+
+
+
+
+
+Mysql
+CHECK TABLE SIZE OF PARTICULAR DATABASE
+SELECT table_name AS "Tables", round(((data_length + index_length) / 1024 / 1024), 2) "Size in MB" FROM information_schema.TABLES WHERE table_schema = "botplatform";
+
+CHECK DATE FORMAT OF PARTICULAR TABLE
+select * from lead_lifecycles limit 1;
+
+CHECK COUNT OF PARTICULAR TABLE & IN DATE WISE
+select count(*) from lead_lifecycles where date(created_at) < '2022-10-15';
+
+Mongo
+CHECK DATE FORMAT OF PARTICULAR TABLE
+db.bots.find().limit(1);
+
+CHECK COUNT OF PARTICULAR TABLE & IN DATE FORMAT WISE
+db.bots.find({updatedAt : {$lt:ISODate("2022-10-16T21:59:59.316Z")}}).count()
+
+
+
+
+
+
+Drop database from mongo command:
+> use botplatform
+switched to db botplatform
+> db.dropDatabase()
+{ "dropped" : "botplatform", "ok" : 1 }
+
+
+
+US-MASTER:
+mongo --host 172.31.0.30  --port 17901 -u "admin" -p --authenticationDatabase "admin"
+suRb05MnG01
+

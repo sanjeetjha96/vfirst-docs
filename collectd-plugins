@@ -1,0 +1,157 @@
+brew info elasticsearch
+
+
+
+#######################################Db-collectd-plugins##############################
+# Config file for collectd(1).
+
+FQDNLookup true
+
+LoadPlugin cpu
+LoadPlugin memory
+LoadPlugin statsd
+LoadPlugin swap
+LoadPlugin network
+LoadPlugin redis
+LoadPlugin mysql
+LoadPlugin nginx
+LoadPlugin df
+LoadPlugin load
+
+
+<Plugin memory>
+        ValuesAbsolute true
+        ValuesPercentage false
+</Plugin>
+
+<Plugin "nginx">
+    URL "http://localhost:80/nginx_status"
+</Plugin>
+
+<Plugin load>
+        ReportRelative true
+</Plugin>
+
+
+
+
+<Plugin "df">
+  Device "/dev/mapper/ubuntu--vg-root"
+  MountPoint "/"
+  FSType "ext4"
+  IgnoreSelected false
+  ReportInodes  false
+  ValuesPercentage true
+</Plugin>
+
+
+
+<Plugin statsd>
+        Host "::"
+        Port "8125"
+        TimerPercentile 90.0
+        TimerUpper     true
+        TimerCount     false
+</Plugin>
+
+<Include "/etc/collectd/collectd.conf.d">
+        Filter "*.conf"
+</Include>
+
+<Plugin "network">
+    Server "3.235.43.107" "25826"
+</Plugin>
+
+<Plugin cpu>
+  ReportByState = false
+  ReportByCpu = false
+  ValuesPercentage = true
+</Plugin>
+
+
+
+<Plugin mysql>
+        <Database "botplatform">
+                Host "10.1.26.67"
+                User "surbU5sBot"
+                Password "S80Dprod0T!Sql"
+                Port 6754
+                MasterStats false
+        </Database>
+</Plugin>
+
+<Plugin redis>
+  <Node "mynode">
+    Host "10.1.26.67"
+    Port "7817"
+    Timeout 2000
+  </Node>
+</Plugin>
+
+
+###################################################App-collectd-plugins###############################
+
+# Config file for collectd(1).
+
+FQDNLookup true
+
+LoadPlugin cpu
+LoadPlugin memory
+LoadPlugin statsd
+LoadPlugin swap
+LoadPlugin network
+LoadPlugin redis
+LoadPlugin mysql
+LoadPlugin nginx
+LoadPlugin df
+LoadPlugin load
+
+<Plugin memory>
+        ValuesAbsolute true
+        ValuesPercentage false
+</Plugin>
+
+<Plugin "nginx">
+    URL "http://localhost:80/nginx_status"
+</Plugin>
+
+
+<Plugin "df">
+  Device "/dev/sda2"
+  MountPoint "/"
+  FSType "ext4"
+  IgnoreSelected false
+  ReportInodes  false
+  ValuesPercentage true
+</Plugin>
+
+
+
+<Plugin load>
+        ReportRelative true
+</Plugin>
+
+
+
+<Plugin statsd>
+        Host "::"
+        Port "8125"
+        TimerPercentile 90.0
+        TimerUpper     true
+        TimerCount     false
+</Plugin>
+
+<Include "/etc/collectd/collectd.conf.d">
+        Filter "*.conf"
+</Include>
+
+<Plugin "network">
+    Server "3.235.43.107" "25826"
+</Plugin>
+
+<Plugin cpu>
+  ReportByState = false
+  ReportByCpu = false
+  ValuesPercentage = true
+</Plugin>
+

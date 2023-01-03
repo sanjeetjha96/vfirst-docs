@@ -1,0 +1,189 @@
+Master server: 172.31.59.83                     (Use private ip)
+Slave server: 172.31.51.143
+
+--------------Install MySQL on Master and Slave Nodes (Version 5.7)---------------------
+Step 1: Configure the MySQL master Server
+sudo apt update
+sudo apt install mysql-server mysql-client
+
+Next, Open the mysql configuration file.
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+
+bind-address           = 172.31.59.83
+server-id                 = 1
+log_bin = /var/log/mysql/mysql-bin.log
+log_bin_index =/var/log/mysql/mysql-bin.log.index
+relay_log = /var/log/mysql/mysql-relay-bin
+relay_log_index = /var/log/mysql/mysql-relay-bin.index
+
+sudo systemctl restart mysql
+sudo systemctl status mysql
+
+Now login to mysql shell
+sudo mysql
+
+Now create user  to slave node
+CREATE USER 'sanju123'@'172.31.51.143' IDENTIFIED BY 'Sann@1234567890';
+GRANT REPLICATION SLAVE ON *.* TO 'sanju123 '@'172.31.51.143';
+
+Now executing the below command that will print the binary filename and position.
+SHOW MASTER STATUS\G
+(This command show like this)
+*************************** 1. row ***************************
+             File: mysql-bin.000002
+         Position: 627
+     Binlog_Do_DB:
+ Binlog_Ignore_DB:
+Executed_Gtid_Set:
+1 row in set (0.00 sec)
+
+Step 2: Configure the MySQL Slave Server
+
+sudo apt update
+sudo apt install mysql-server mysql-client
+
+Next, Open the mysql configuration file.
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+
+bind-address           = 172.31.51.143
+server-id                 = 2
+log_bin = /var/log/mysql/mysql-bin.log
+log_bin_index =/var/log/mysql/mysql-bin.log.index
+relay_log = /var/log/mysql/mysql-relay-bin
+relay_log_index = /var/log/mysql/mysql-relay-bin.index
+
+sudo systemctl restart mysql
+sudo systemctl status mysql
+
+Now login to mysql shell
+sudo mysql
+
+---------you will need to make some configuration that will allow the slave server to connect to the master server. But first, stop the slave threads-----------
+STOP SLAVE;
+
+CHANGE MASTER TO MASTER_HOST ='172.31.59.83', MASTER_USER ='sanju123', MASTER_PASSWORD ='Sann@1234567890', MASTER_LOG_FILE = 'mysql-bin.000002', MASTER_LOG_POS = 627;
+
+START SLAVE;
+
+Verify the MySQL Master-Slave Replication
+Log into MySQL in the Master server.
+sudo mysql
+CREATE DATABASE sanjeetdb;
+
+Now, log in to slave server.
+SHOW DATABASES;          (to check replicate master to slave or not)
+-----------------------------END-----------------------------
+
+reset slave;    (any error arises in slave at time of connection use this command)
+
+sudo mysql_secure_installation    (command to secure your mysql using high encryption password)
+
+
+-----------------for secure mysql database with password authentication--------------------
+sudo mysql
+use mysql
+UPDATE user SET plugin='mysql_native_password' WHERE User='root';
+UPDATE mysql.user SET authentication_string=PASSWORD('password') WHERE User='root';
+%Cd&7R3PlX*m&BdDm*37mrMEggBewFb8Ip
+flush privileges;
+mysql> uninstall plugin validate_password; (for password policy does not match run this command in mysql shell)
+
+
+## ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Ab8#Vfople!';
+----------for login using root user & password--------
+mysql -uroot -pbotplateform
+mysql -uroot -p then enter then ask password give your password
+
+--------------for backup (dump mysql)-----------------
+mysqldump -uroot -pmypass [database_name]  > dump.sql
+Eg.. mysqldump -uroot -p --all-databases > /tmp/db.sql
+make a tar file: tar -czf db.sql.tar.gz db.sql
+
+Single table dump
+mysqldump -uroot -p surbochat summaries  > summrydb.sql
+-----------for restore-----------------------
+mysql -uroot -p < db.sql
+
+-------------create database & permission--------------
+create database database_name
+grant all on surboace.* to surbochat@'%';
+
+create database Django3bot;
+CREATE USER 'Django3'@'%' IDENTIFIED BY 'qSCmfbU2pV5f';
+GRANT ALL PRIVILEGES ON Django3bot.* TO 'Django3'@'%';
+
+
+access provided with existing DB
+create user loyalityvfread identified by '3tR#E!2md0A)Nr8';
+grant select on loyaltyPlatform.* to 'loyalityvfread'@'%';
+flush privileges; 
+
+
+
+     -------------------------for client requirement-------------------
+
+max_connections         = 500
+key_buffer_size         = 256M
+max_allowed_packet      = 256M
+thread_stack            = 256K
+thread_cache_size       = 16
+
+general_log_file = /var/log/mysql/mysql_general.log         (edit this line & uncomment)
+general_log = 1
+slow_query_log          = 1
+slow_query_log_file     = /var/log/mysql/mysql-slow.log
+long_query_time = 1
+
+innodb_buffer_pool_size        = 1G
+innodb_log_file_size           = 128M
+innodb_log_buffer_size         = 12M
+
+
+
+
+
+show processlist;  (to show how much user connected to mysql)
+
+use dbname;
+show tables;
+select * from tbl_name;
+
+create database surbochat;
+CREATE USER 'surbochat'@'172.31.95.74' IDENTIFIED BY '3Chta@ovG1ct';
+GRANT ALL PRIVILEGES ON surbochat.* TO 'surbochat'@'172.31.95.74';
+SHOW GRANTS FOR 'ishika'@'localhost';
+
+
+
+SHOW GLOBAL STATUS; (to show global status of query)
+\s to show uptime
+SHOW GLOBAL STATUS LIKE 'uptime';
+SHOW STATUS;
+select * from plans where id=48\G;
+delete from plans where id=48;
+select * from pricing where plan_id = 48 \G;
+
+
+CREATE DATABASE botplatform CHARACTER SET utf8 COLLATE utf8_general_ci;
+change latin1 to utf8 on dump file
+
+SELECT DEFAULT_CHARACTER_SET_NAME, DEFAULT_COLLATION_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'bot';
+
+
+
+mysql -P 6935 -ubotsupPr08 -p80Tprod0TSq@5up botsup -h mysqldb.botsup.io.local
+mysql --P 6754 h mysql.surbo.io -udev-team -pdev#756Rtn40
+mysql -h 172.31.0.50 -P 6754 -usurbochat -p surbochat
+
+
+
+pls note down below steps:
+instead disabling key add "rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022"
+
+after install login with given password- and run below query to remove password restrictions-
+UNINSTALL COMPONENT 'file://component_validate_password';
+
+change password:
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
+flush privileges;
+

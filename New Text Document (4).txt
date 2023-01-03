@@ -1,0 +1,121 @@
+-------------------------------- first install MongoDb 3.4 in both node master & slave ---------------------------------
+
+1. Import MongoDB public GPG Key:
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+
+2. Create a List File for MongoDB as a Repository
+echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+
+3. Install MongoDB 3.4 on Ubuntu 18.04 / Ubuntu
+sudo apt update
+sudo apt install -y mongodb-org
+
+4 . Start MongoDB
+sudo systemctl start mongod
+
+5. Check MongoDB status
+sudo systemctl status mongod
+
+6. Next, enable automatic starting at boot time:
+sudo systemctl enable mongod
+
+7. The service should be listening on port 2291
+netstat -tunelp | grep 2291     or  netstat -pllnet
+
+8. now also check MongoDB main configuration file is /etc/mongod.conf
+mongo --eval 'db.runCommand({ connectionStatus: 1 })'             (command to test connection)
+
+9. now go to master node
+then go to sudo vi /etc/hosts file
+paste slave node ip & correct slave node hostname
+e.g 13.127.157.89 MangoSlave01
+
+------------------------------- 10. Configure MongoDB Replication ------------------------------
+- Change MongoDB Listen Address from localhost IP on all nodes
+sudo vi /etc/mongod.conf
+# MongoDbSlave01
+# network interfaces
+net:
+  port: 2291
+  bindIp: 13.127.157.89  # Listen to local interface only, comment to listen on all interfaces.
+
+11. Configuring MongoDB Replica Set
+- Edit the MongoDB configuration file mongod.conf and enable replica set on Slave node
+replication:
+  replSetName: "replica01"
+
+Open port 2291/tcp on the firewall:
+sudo ufw enable
+sudo ufw allow ssh
+sudo ufw allow 2291/tcp
+
+12. Configure MongoDB to start during the operating system’s boot
+sudo systemctl enable mongod.service
+sudo systemctl restart mongod.service
+
+13. Check the listen Address of MongoDB service:
+ss -tunelp | grep -i mongo
+
+14. Initiate MongoDB Replica Set
+ - Login to the mongodb master server and start the mongo shell.
+mongo 15.206.66.87
+Initialize replica set on slave node by running below command:
+
+rs.initiate()
+{
+        "info2" : "no configuration specified. Using a default configuration for the set",                                                           
+        "me" : "13.127.157.89:2291",
+        "ok" : 1,
+        "operationTime" : Timestamp(1534797235, 1),
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1534797235, 1),
+                "signature" : {
+                        "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),                                                                          
+                        "keyId" : NumberLong(0)
+                }
+        }
+}
+
+
+
+apt-get install -y mongodb-org=4.0.19 mongodb-org-server=4.0.19 mongodb-org-shell=4.0.19 mongodb-org-mongos=4.0.19 mongodb-org-tools=4.0.19  (install in ubuntu 16.04)
+
+Srk@86Q#jU!19
+
+
+/etc/
+ls -l localtime to show local zone
+sudo unlink /etc/localtime                                                       unlink current timezone
+sudo ln -s /usr/share/zoneinfo/Asia/Kolkata /etc/localtime        change timezone using link
+ls -l localtime     check change or not
+date     to show current date
+
+du -sh . (to check current directory space)
+rm -f 2020-05-*  (remove all 2020-05 date logs to free the disk space)
+rm -f tornado.log_202007*
+rm -f tornado.log_202007??.tar.gz
+cherry_py_error.log.10.gz
+use 50dd to delete data of file in vi mode
+tail -n -1 revisions.log
+getent passwd {1000..60000} (command to show user with permission this command work only in root)
+rm -f 2020-0?-??.log*
+rm -f 2020-10-??.log*
+
+:1,$d then press enter to delete content of a file(: means execution 1 means 1st line $ means last line)
+
+tar -czf deploying-asp-dot-net-core-microservices-kubernetes-aks_20210509.tar.gz --remove deploying-asp-dot-net-core-microservices-kubernetes-aks (file is archived and also previous file)
+
+lsblk
+sudo growpart /dev/xvda 1
+sudo resize2fs /dev/xvda1
+
+
+
+#################
+1.iostat
+2.nethogs
+3.iftop
+4.nload
+5.bmon
+6.netperf
+7.vnstat

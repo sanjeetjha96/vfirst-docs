@@ -1,0 +1,92 @@
+CREATE TABLE member (
+    firstname VARCHAR(25) NOT NULL,
+    lastname VARCHAR(25) NOT NULL,
+    username VARCHAR(16) NOT NULL,
+    email VARCHAR(35),
+    joined DATE NOT NULL
+)
+PARTITION BY RANGE( YEAR(joined) ) (
+    PARTITION p0 VALUES LESS THAN (1960),
+    PARTITION p1 VALUES LESS THAN (1970),
+    PARTITION p2 VALUES LESS THAN (1980),
+    PARTITION p3 VALUES LESS THAN (1990),
+    PARTITION p4 VALUES LESS THAN MAXVALUE
+);
+
+
+ACL SETUSER surbo on allkeys +set
+ACL SETUSER surbo +get
+ACL LIST
+redis-cli -h localhost -p 6379 -a surbo
+
+
+CONFIG SET requirepass "mypass"
+auth password
+
+indexing shi se nhi
+data availability for raplication
+query pattern(for optimize)
+memory required
+latency
+
+
+
+CREATE TABLE whatsapp_templates (
+    firstname VARCHAR(25) NOT NULL,
+    lastname VARCHAR(25) NOT NULL,
+    username VARCHAR(16) NOT NULL,
+    email VARCHAR(35),
+    joined DATE NOT NULL
+)
+PARTITION BY RANGE( YEAR(joined) ) (
+    PARTITION p0 VALUES LESS THAN (1960),
+    PARTITION p1 VALUES LESS THAN (1970),
+    PARTITION p2 VALUES LESS THAN (1980),
+    PARTITION p3 VALUES LESS THAN (1990),
+    PARTITION p4 VALUES LESS THAN MAXVALUE
+);
+
+ALTER TABLE whatsapp_templates PARTITION BY RANGE(id)(
+    PARTITION p0 VALUES LESS THAN (5),
+    PARTITION p1 VALUES LESS THAN (10),
+    PARTITION p2 VALUES LESS THAN MAXVALUE
+);
+
+
+
+SELECT VERSION();
+USE surbo_ace1;
+select database();
+SHOW PLUGINS;
+SYSTEM clear;
+DESC whatsapp_templates;
+select * from whatsapp_templates;
+show table status like 'whatsapp_templates';
+show table status like 'whatsapp_templates'\G;
+select * from whatsapp_templates where id=1;
+explain select * from whatsapp_templates where id=1\G;
+show table status like 'whatsapp_templates'\G;
+select * from partitions;
+show create table whatsapp_templates;
+explain partitions select * from whatsapp_templates where id=1\G
+
+
+
+
+http://acmeextension.com/mysql-table-partitioning/
+
+
+
+
+
+
+show binary logs;
+PURGE BINARY LOGS TO 'mysql-bin.000003';
+PURGE BINARY LOGS BEFORE '2021-06-28 00:00:00';
+PURGE BINARY LOGS BEFORE DATE_SUB( NOW(), INTERVAL 7 DAY);
+
+expire_logs_days=10
+show variables like 'expire_%';
+SET GLOBAL expire_logs_days = 7;
+
+

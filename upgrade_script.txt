@@ -1,0 +1,43 @@
+#!/bin/bash
+
+date=`date --date= +%d-%B-%Y`
+tdate=`date --date= +%Y%m%d`
+ldate=`date -d "1 days ago" +"%Y%m%d"`
+log_file=/scripts/upgrades_logs/un_upgrade_$date.log
+mkdir -p /scripts/upgrades_logs/
+echo ---- apt-get update---- > $log_file
+apt-get update  >> $log_file
+echo ---- apt-get sharutils---- >> $log_file
+apt-get install sharutils >> $log_file
+
+tot_upgd=`apt list --upgradable 2>/dev/null | wc -l`
+nor_upgd=`apt list --upgradable 2>/dev/null | grep -v "\-security" | wc -l`
+sec_upgd=`apt list --upgradable 2>/dev/null | grep "\-security" | wc -l`
+
+echo $tot_upgd
+echo $nor_upgd
+echo $sec_upgd
+
+cd /scripts/upgrades_logs/
+touch test.txt
+
+####--------------Normal Updates List ------------------------->
+apt list --upgradable 2>/dev/null | grep -v "\-security" > normal_updates_$date.txt
+####--------------Security Updates List ----------------------->
+apt list --upgradable 2>/dev/null | grep "\-security" > security_updates_$date.txt
+
+echo -------------- Install Security Updates Only --------------- >> $log_file
+#sudo apt list --upgradable 2>/dev/null | grep -e "-security" | awk -F "/" '{print $1}' | xargs apt install $2 >> $log_file
+
+( printf '%s\n\n' "Hi Team"
+printf '%s\n\n' "Please find the below details of untended upgrades for the $1 server"
+printf '%s\n' "Total System upgrade - $tot_upgd"
+printf '%s\n' " "
+printf '%s\n' "Normal upgrade - $nor_upgd"
+printf '%s\n' " "
+printf '%s\n' "Security upgrade - $sec_upgd"
+printf '%s\n' " ";
+uuencode security_updates_$date.txt security_updates_.txt;
+uuencode normal_updates_$date.txt normal_updates_.txt
+) |/usr/bin/mailx -s "Unattended Upgardes summary for server $1 - $date" devops.surbo@vfirst.com -a 'From: monitor@vfirst.com'
+

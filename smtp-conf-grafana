@@ -1,0 +1,26 @@
+###############################install#############################################
+
+grafana-cli plugins install grafana-image-renderer
+
+
+#################################### SMTP / Emailing ##########################
+[smtp]
+enabled = true
+host = email-smtp.us-west-2.amazonaws.com:587
+user = AKIAQINYVPEMT6FAPRPB
+# If the password contains # or ; you have to wrap it with triple quotes. Ex """#password;"""
+password = """BPEdJVA3o0E+0ZC0X08vkCWiOOi7EN5bwrlbua0/hsZe"""
+;cert_file =
+;key_file =
+skip_verify = true
+from_address = support@surbo.io
+;from_name = Grafana
+# EHLO identity in SMTP dialog (defaults to instance_name)
+;ehlo_identity = dashboard.example.com
+# SMTP startTLS policy (defaults to 'OpportunisticStartTLS')
+startTLS_policy = YesStartTLS
+
+[emails]
+;welcome_email_on_sign_up = false
+;templates_pattern = emails/*.html
+

@@ -1,0 +1,53 @@
+Step-1) take backup
+
+cd /database-backup/mysql
+
+mysqldump -uroot -p mysql -uroot -p botplatform > /database-backup/mysql/botplatform.19mar2021.sql
+
+ 
+
+Step-2) Copy dump file
+
+cp botplatform.19mar2021.sql botplatform-utf.19mar2021.sql
+
+ 
+
+Step-3) open file and replace latin1
+
+latin1 replace to utf8
+
+ 
+
+Step 4) Login on mysql and drop botplatform
+
+mysql -uroot -p
+
+B0t58rB@ovF
+
+ 
+
+mysql > drop database botplatform;
+
+ 
+
+mysql > CREATE DATABASE botplatform CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+ 
+
+Step-5) check tables in botplatform - should be blank
+
+mysql -uroot -p botplatform
+
+B0t58rB@ovF
+
+ 
+
+mysql > show tables;
+
+ 
+
+Step-6) Restore
+
+mysql -uroot -p botplatform < /database-backup/mysql/botplatform-utf.19mar2021.sql
+
+B0t58rB@ovF

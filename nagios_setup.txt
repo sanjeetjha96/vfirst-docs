@@ -1,0 +1,99 @@
+mkdir /download
+ 1521  cd /download/
+ 1522  ls
+ 1523  useradd nagios
+ 1524  apt-get update
+ 1525  apt-get install build-essential libgd-dev openssl libssl-dev unzip
+ 1526  curl -L -O http://nagios-plugins.org/download/nagios-plugins-2.2.1.tar.gz
+ 1527  tar zxf nagios-plugins-*.tar.gz
+ 1528  cd nagios-plugins-2.2.1
+ 1529  ls
+ 1530  ./configure --with-nagios-user=nagios --with-nagios-group=nagios --with-openssl
+ 1531  make
+ 1532  make install
+ 1533  cd ..
+ 1534  cd ~
+ 1535  cd /download/
+ 1536  ls
+ 1537  curl -L -O https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-3.2.1/nrpe-3.2.1.tar.gz
+ 1538  ls
+ 1539  tar zxf nrpe-*.tar.gz
+ 1540  ls
+ 1541  cd nrpe-3.2.1
+ 1542  ls
+ 1543  ./configure --enable-command-args --with-nagios-user=nagios --with-nagios-group=nagios --with-ssl=/usr/bin/openssl --with-ssl-lib=/usr/lib/x86_64-linux-gnu
+ 1544  make all
+ 1545  make install
+ 1546  make install-config
+ 1547  make install-init
+ 1548  systemctl start nrpe.service
+ 1549  systemctl enable nrpe.service
+ 1550  apt-get install libmonitoring-plugin-perl
+ 1551  apt-get install libwww-perl
+ 1552  apt-get install libchi-driver-redis-perl
+ 1553  df -h
+ 1554  apt-get install dc
+ 1556  cd /usr/local/nagios/etc/
+ 1557  ls
+ 1558  cat nrpe.cfg 
+ 1560  cd /usr/local/nagios/
+ 1561  ls
+ 1562  cd etc/
+ 1563  ls
+ 1564  vim nrpe.cfg 
+ 1565  hostname -i
+ 1566  cd /tmp/
+ 1567  scp -P 2291 sunny.chourasia@172.31.10.103:/tmp/nagios.tar.gz .
+ 1568  ls -ltrh
+ 1569  tar -xzf nagios.tar.gz 
+ 1570  	cd /usr/local/nagios/
+ 1571  ls -ltrh
+ 1572  mv libexec libexec_old
+ 1573  cp -r /tmp/nagios/libexec .
+ 1574  ls -ltrh
+ 1575  chown -R nagios:nagios libexec
+ 1576  hostname -i
+ 1577  cd etc/
+ 1578  vim nrpe.cfg 
+ 1579  /usr/local/nagios/libexec/check_users -w 10 -c 15
+ 1580  /usr/local/nagios/libexec/check_load -r -w 5.0,4.0,3.0 -c 10.0,6.0,4.0
+ 1581  /usr/local/nagios/libexec/check_disk -w 20% -c 10% -p /dev/hda1
+ 1582  /usr/local/nagios/libexec/check_procs -w 5 -c 10 -s Z
+ 1583  /usr/local/nagios/libexec/check_procs -w 350 -c 400
+ 1584  /usr/local/nagios/libexec/check_cpu_usage -w 40 -c 60
+ 1585  /usr/local/nagios/libexec/check_mysql_connection -w 30 -c 50 -u root -p ValueFirst@123 -H localhost
+ 1586  /usr/local/nagios/libexec/check_ssh -t 10 -p 2291 localhost
+ 1587  /usr/local/nagios/libexec/check_domain.sh -d surbo.co -w 30 -c 20
+ 1588  apt-get install libmonitoring-plugin-perl
+ 1589  apt-get install libwww-perl
+ 1590  apt-get install libchi-driver-redis-perl
+ 1591  apt-get install dc
+ 1592  /usr/local/nagios/libexec/check_domain.sh -d surbo.co -w 30 -c 20
+ 1593  apt install whois
+ 1594  /usr/local/nagios/libexec/check_domain.sh -d surbo.co -w 30 -c 20
+ 1595  /usr/local/nagios/libexec/check_mysql_lag_time -H localhost -u root -p ValueFirst@123 -w 30 -c 60
+ 1596  /usr/local/nagios/libexec/check_squid.pl -u https://ace.surbo.io/ -p 172.31.10.9 -l 1709 -e 200
+ 1597  /usr/local/nagios/libexec/check_website -u https://bothealth.surbo.io -w 1000 -c 2000 -nocert
+ 1598  /usr/local/nagios/libexec/falconCheck.sh
+ 1599  systemctl restart nrpe.service 
+ 1600  vim nrpe.cfg 
+ 1601  hostname -i
+ 1602  telnet 172.31.21.220 5666
+ 1603  /usr/local/nagios/libexec/check_website -u https://bothealth.surbo.io -w 1000 -c 2000 -nocert
+ 1604  vim nrpe.cfg 
+ 1605  /usr/local/nagios/libexec/check_ddos.py -c 100 -w 50
+ 1606  vim /usr/local/nagios/libexec/check_ddos.py
+ 1607  /usr/local/nagios/libexec/check_ddos.py -c 100 -w 50
+ 1608  systemctl restart nrpe.service 
+ 1609  vim nrpe.cfg 
+ 1610  /usr/local/nagios/libexec/check_nginx -H localhost -w 120 -c 130
+ 1611  vim /usr/local/nagios/libexec/check_nginx
+ 1612  /usr/local/nagios/libexec/check_nginx -H localhost -w 120 -c 130
+ 1613  vim nrpe.cfg 
+ 1614  vim /usr/local/nagios/libexec/check_redis.pl
+ 1615  cat /usr/local/nagios/libexec/check_redis.pl
+ 1616  vim nrpe.cfg 
+ 1625  systemctl restart nrpe.service 
+ 
+
+

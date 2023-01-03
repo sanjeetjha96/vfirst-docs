@@ -1,0 +1,16 @@
+Monolithic vs Microservices architecture:
+MONOLITHIC APPLICATIONS - If all the functionalities of a project exist in a single codebase, then that application is known as a monolithic application.
+Disadvantages of Monolithic applications: 
+- It becomes too large with time and hence, difficult to manage.
+- We need to redeploy the whole application, even for a small change.
+- As the size of the application increases, its start-up and deployment time also increases.
+- For any new developer joining the project, it is very difficult to understand the logic of a large Monolithic application even if his responsibility is related to a single functionality.
+- Even if a single part of the application is facing a large load/traffic, we need to deploy the instances of the entire application in multiple servers. It is very inefficient and takes up more resources unnecessarily. Hence, horizontal scaling is not feasible in monolithic applications.
+
+MICROSERVICES APPLICATIONS - It is an architectural development style in which the application is made up of smaller services that handle a small portion of the functionality and data by communicating with each other directly using lightweight protocols like HTTP.
+Advantages of microservices: 
+- It is easy to manage as it is relatively smaller.
+- If there’s any update in one of the microservices, then we need to redeploy only that microservice.
+- It is very easy for a new developer to onboard the project as he needs to understand only a particular microservice providing the functionality he will be working on and not the whole system.
+- If a particular microservice is facing a large load because of the users using that functionality in excess, then we need to scale out that microservice only. Hence, the microservices architecture supports horizontal scaling.
+- If a particular microservice goes down due to some bug, then it doesn’t affect other microservices If a particular microservice goes down due to some bug, then it doesn’t affect other microservices 

@@ -1,0 +1,168 @@
+#!/bin/bash
+#monitor script for mongo mysql elastic search and dicsk space
+#*/5 * * * *  sh  /home/ubuntu/monitor_script/supervisor_monitor.sh prod-server-1 >> /var/log/monitor_log/monitor_script.log
+
+# every 5 minutes
+sms_api_user_name=demohtpp43
+sms_api_password=hjhj1230
+sms_api_from=VFSRBO
+SERVER_NAME=$1
+PROD_SERVER_DOMAIN=$2
+LOG_FILES_PATH=/script/monitor_script/services_name.txt
+#AWS_ACCESS_KEY="AKIAQINYVPEMWO72YPJQ"
+#AWS_SECRET_KEY="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"
+AWS_ACCESS_KEY="AKIAQINYVPEMX4KSSEEV"
+AWS_SECRET_KEY="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"
+ERROR_FILE_LAST_LINE_COUNT=50
+EMAIL_SUBJECT="$SERVER_NAME Production Issue"
+EMAIL_TO="dev-surbo@vfirst.com"
+EMAIL_FROM="Production Issue on $SERVER_NAME<support@surbo.io>"
+now=$(TZ="Asia/Kolkata" date)
+send_sms()
+{
+    message=$1
+    for mobile_number in 9654957870 9871134066 
+    do
+        call_sms_api  "$mobile_number" "$message"
+    done
+}
+call_sms_api()
+{
+
+    mobile_number=$1
+    message=$2
+    url="https://http.myvfirst.com/smpp/sendsms?username=$sms_api_user_name&password=$sms_api_password&to=$mobile_number&from=$sms_api_from&text=$message"
+    curl -m 2 $url
+    echo "$url"
+    template_message=$(echo "Message:-=========="$mobile_number $message | sed -e "s/%20/ /g")
+    echo "$template_message"
+}
+
+
+check_disk_space()
+{
+
+df -H | grep -vE '^Filesystem|tmpfs|cdrom' | awk '{ print $5 " " $1 }' |grep -v "loop"| while read output;
+do
+  usep=$(echo $output | awk '{ print $1}' | cut -d'%' -f1  )
+  partition=$(echo $output | awk '{ print $2 }' )
+  if [ $usep -ge 90 ]; then
+    message="Running out of space $partition $usep percent on $(hostname)  ${HOSTNAME} $SERVER_NAME @$(date)"
+    template_message=$(echo $message | sed -e "s/ /%20/g")
+    send_sms $template_message
+    webhook_alert "Running out of space $partition $usep percent on $(hostname)  ${HOSTNAME} $SERVER_NAME @$(date)"
+    ########
+    currenttime=`date +%Y-%m-%d" "%T`
+            echo "Disk check is failed on $SERVER_NAME." 
+    fi
+    done
+  }  
+
+
+get_log_file_name()
+{
+    service_name=$1
+    grep -w $service_name $LOG_FILES_PATH  |awk '{ print $1 " " $2 " " $3}' |  while read output;
+    do
+        echo "$output"
+    done
+}
+check_file_last_modified_time()
+{
+    service_name=$1
+    file_info=$( get_log_file_name $service_name )
+    file_name=$(echo $file_info | awk '{ print $2 }' )
+    expected_modified_time=$(echo $file_info | awk '{ print $3 }' )
+    CURTIME=$(date +%s)
+    FILETIME=$(stat $file_name -c %Y)
+    TIMEDIFF=$(expr $CURTIME - $FILETIME)
+    echo "File $file_name and last modified $TIMEDIFF seconds ago and excepted $expected_modified_time seconds"
+    if [ $TIMEDIFF -gt $expected_modified_time ]; then
+        echo "Email sent..."
+       file_get_last_line_mail "$service_name log file is not updated last $expected_modified_time seconds on $SERVER_NAME.Last modified $TIMEDIFF seconds ago" $service_name
+    fi
+}
+
+
+file_get_last_line_mail()
+{
+    subject=$1
+    service_name=$2
+    file_info=$( get_log_file_name $service_name )
+    file_name=$(echo $file_info | awk '{ print $2 }' )
+    last_lines=$(tail -n $ERROR_FILE_LAST_LINE_COUNT $file_name | while read output;
+    do
+        echo "$output"
+    done)
+    send_email "$subject" "Service name is:-$service_name and log file path is:-$file_name and last log error:-\n $last_lines"
+}
+
+check_supervisor_service()
+{
+    supervisorctl status | while read output;
+    do
+      process_name=$(echo $output | awk '{ print $1}'  )
+      status=$(echo $output | awk '{ print $2 }' )
+      pid=$(echo $output | awk '{ print $4 }' )
+      uptime=$(echo $output | awk '{ print $6 }' )
+      if [ "$status" != "RUNNING" ]; then
+           message="On $SERVER_NAME ${HOSTNAME} @ $now $output "
+           template_message=$(echo $message | sed -e "s/ /%20/g")
+           send_sms $template_message
+	   webhook_alert "$process_name is not running and current status is $status on $SERVER_NAME $process_name"
+           file_get_last_line_mail "$process_name is not running and current status is $status on $SERVER_NAME" $process_name
+	    #######
+           currenttime=`date +%Y-%m-%d" "%T`
+            echo "Supervisor check is failed on $SERVER_NAME. URL:$PROD_SERVER_DOMAIN "|/usr/bin/mail -s "Supervisor-check $SERVER_NAME- $currenttime" mahender.gautam@vfirst.com -a 'From: monitor@vfirst.com'
+      else
+            echo "Process name :- $process_name, pid is $pid, uptime is $uptime and status is $status "
+            #check_file_last_modified_time $process_name
+      fi
+    done
+}
+
+
+#send_email()
+#{
+#    TO=$EMAIL_TO
+#    FROM=$EMAIL_FROM
+#    SUBJECT=$1
+#    MESSAGE=$2
+#    date="$(date -R)"
+#    priv_key="$AWS_SECRET_KEY"
+#    access_key="$AWS_ACCESS_KEY"
+#    signature="$(echo -n "$date" | openssl dgst -sha256 -hmac "$priv_key" -binary | base64 -w 0)"
+#    auth_header="X-Amzn-Authorization: AWS3-HTTPS AWSAccessKeyId=$access_key, Algorithm=HmacSHA256, Signature=$signature"
+#    endpoint="https://email.us-west-2.amazonaws.com/"
+#    action="Action=SendEmail"
+#    source="Source=$FROM"
+#    to="Destination.ToAddresses.member.1=$TO"
+#    subject="Message.Subject.Data=$SUBJECT"
+#    message="Message.Body.Text.Data=$MESSAGE"
+#    curl -v -X POST -H "Date: $date" -H "$auth_header" --data-urlencode "$message" --data-urlencode "$to" --data-urlencode "$source" --data-urlencode "$action" --data-urlencode "$subject"  "$endpoint"
+#}
+check_health_check()
+{
+     curl --write-out '%{http_code}\n' --silent --output /dev/null "$PROD_SERVER_DOMAIN/health-check/" |  while read output;
+     do
+         echo "current status is $output"
+         if [ "$output" != "200" ]; then
+            message="$SERVER_NAME health check fail. $SERVER_NAME @ $now"
+            template_message=$(echo $message | sed -e "s/ /%20/g")
+            echo $template_message
+            send_sms $template_message
+	    webhook_alert "$SERVER_NAME health check fail. $SERVER_NAME @ $now"
+	    ######
+	    currenttime=`date +%Y-%m-%d" "%T`
+            echo "Health check is failed on $SERVER_NAME. URL:$PROD_SERVER_DOMAIN "|/usr/bin/mail -s "Health-check $SERVER_NAME- $currenttime" mahender.gautam@vfirst.com -a 'From: monitor@vfirst.com'
+         fi
+     done
+
+}
+## header
+echo "Service status on ${HOSTNAME} @ $now"
+echo "------------------------------------------------------"
+check_supervisor_service
+check_disk_space
+check_health_check
+

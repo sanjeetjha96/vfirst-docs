@@ -1,0 +1,84 @@
+1) Strict-Transport-Security
+Fix 
+Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains"
+
+2) X-Frame-Options
+FIX 
+Header set X-Frame-Options: "sameorigin"
+
+3 & 4)       X-XSS-Protection  & Expect-CT
+FIX 
+    <IfModule mod_headers.c>
+    Header set X-XSS-Protection: "1; mode=block"
+
+    Header set Expect-CT "max-age=7776000, enforce"
+    </IfModule>
+
+5) X-Content-Type-Options 
+FIX
+Header set X-Content-Type-Options nosniff
+
+
+https://www.immuniweb.com/websec/ (url to test above apache header is working fine or not)
+
+/etc/apache2/sites-available# a2ensite jenkins.conf (command to link site from sites-available to sites-enabled )
+sudo a2enmod headers (command to enable header changes)
+a2enmod ssl (command to enable ssl certificate)
+a2enmod proxy_http (change webserver header enable proxy by this command)
+
+sudo apt  install ruby
+sudo gem install capistrano
+sudo gem install "capistrano-laravel"
+sudo gem install "capistrano-composer"
+gem install capistrano-dotenv
+
+
+
+jenkins initialpass (29b8943eff1a46548ee2e1d83fe31567)
+admin user gautam
+gautam pass for jenkins G$sa@TJh239$
+
+#############Nginx-Header(/etc/nginx/nginx.conf)###############
+# add_header Content-Security-Policy "";
+         add_header Strict-Transport-Security "max-age=31536000;includeSubDomains;preload";
+         add_header X-Frame-Options DENY;
+         add_header X-Content-Type-Options nosniff;
+         add_header X-XSS-Protection "1; mode=block";
+         add_header Expect-CT "enforce, max-age=300";
+
+
+
+
+
+
+
+
+
+
+##########################Apache.conf###################
+sudo vi /etc/apache2/sites-available/surbo.io.conf
+<VirtualHost *:80>
+    ServerName surbo.io
+    ServerAlias www.surbo.io
+    DocumentRoot "/var/www/html/"
+    Redirect / https://web.surbo.io
+
+    ErrorLog ${APACHE_LOG_DIR}/surbo-error.log
+    CustomLog ${APACHE_LOG_DIR}/surbo-access.log combined
+</VirtualHost>
+
+<VirtualHost *:443>
+    SSLEngine on
+    ServerName surbo.io
+    ServerAlias www.surbo.io
+    SSLCertificateKeyFile /etc/ssl/private/surbo.key
+    SSLCertificateFile /etc/ssl/certs/surbo_io.crt
+    SSLCertificateChainFile /etc/ssl/certs/CAChain.crt
+    DocumentRoot "/var/www/html/"
+    <Directory "/var/www/html/">
+       AllowOverride All
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/ssl-surbo-error.log
+    CustomLog ${APACHE_LOG_DIR}/ssl-surbo-access.log combined
+</VirtualHost>
+

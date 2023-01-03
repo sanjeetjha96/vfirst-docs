@@ -1,0 +1,29 @@
+........................................Create User.........................................
+
+mysql -h mysqlsann.mysql.database.azure.com -u sanju96@mysqlsann -p (for login in mysql)
+CREATE USER 'labrasatish'@'168.61.217.53' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON sanju.* TO 'labrasatish'@'168.61.217.53';
+SET PASSWORD FOR 'labrasatish'@'168.61.217.53' = PASSWORD('Sann@1234567890');
+then login to new user:
+mysql -h mysqlsann.mysql.database.azure.com -u labrasatish@mysqlsann -p
+select user(), current_user(); (to show the current user)                              
+sanju is basically database name not mysql name..............
+..............for backup use mysqldump...............
+go to root and apply these command........
+mysqldump -h mysqlsann.mysql.database.azure.com -u labrasatish@mysqlsann -p sanju > dump.sql
+.....................restore......................
+mysql -u root -pserver harsh < dump.sql
+
+
+cf7b6c3e-b3f0-4e75-ac9b-5f71fcfb701d(clientid)
+89814a44-fcd7-43b5-b6a7-edf6ca34980c(tenentid)
+PUGIiY1rSbfB=_8At_ds32?2Sy5BLA.I(secret)
+20cc4249-47ec-426d-9270-57a2967b9566(subs)
+
+
+
+
+CHANGE MASTER TO MASTER_HOST ='172.31.59.83', MASTER_USER ='sanju123', MASTER_PASSWORD ='Sann@1234567890', MASTER_LOG_FILE = 'mysql-bin.000002', MASTER_LOG_POS = 627;
+
+
+

@@ -1,0 +1,21 @@
+172.31.3.41
+redis-cli -h 172.31.3.41 -p 7817
+Redis-cli > CONFIG get dir 
+redis-cli > SAVE
+then move dump.rdb to 172.31.13.189
+cp -r /var/lib/redis /home/sanjeet
+scp -r -P 2291 /home/sanjeet/redis/dump.rdb sanjeet@172.31.13.189:/tmp	
+
+now login to 172.31.13.189
+1. stop redis service
+systemctl stop redis-server
+2.check permission & ownership
+3.then move dump.rdb to your home 
+mv /var/lib/redis/dump.rdb /home/sanjeet/existdump.rdb
+4.restore dump.rdb that we copy already from db1 
+cp /tmp/dump.rdb /var/lib/redis/dump.rdb
+5.check permission & ownership
+6.restart redis server
+systemctl restart redis-server
+7.redis-cli -h 172.31.13.189 -h 7817
+8.keys *

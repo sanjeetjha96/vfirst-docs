@@ -1,0 +1,70 @@
+without security only normal updates
+sudo apt list --upgradable 2>/dev/null | grep -v "\-security" |awk -F "/" '{print $1}' | xargs apt install -y
+
+sudo apt list --upgradable 2>/dev/null |awk -F "/" '{print $1}' | xargs apt install -y
+
+
+
+
+
+
+
+
+
+sudo apt list --upgradable 2>/dev/null | grep -e "-security" | awk -F "/" '{print $1}' | xargs apt install -y
+apt list --upgradable 2>/dev/null | grep -i "\-security" |awk -F "/" '{print $1}' |xargs apt install -y
+dpkg --configure -a
+
+
+
+
+apt list --upgradable 2>/dev/null | grep -i "\-security" |awk -F "/" '{print $1}' |wc -l
+apt list --upgradable
+
+
+unextracting template package 100%
+sudo apt list --upgradable 2>/dev/null | grep -i "apt" | awk -F "/" '{print $1}' | xargs apt install -y
+
+security-patches
+sudo apt list --upgradable 2>/dev/null | grep -e "-security" | awk -F "/" '{print $1}' | xargs apt install -y
+
+both(security & normal)
+sudo apt list --upgradable 2>/dev/null  | awk -F "/" '{print $1}' | xargs apt install -y
+
+Normal-patches without mongo 
+sudo apt list --upgradable 2>/dev/null | grep -v "mongo" | awk -F "/" '{print $1}' | xargs apt install -y
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sudo apt list --upgradable 2>/dev/null | grep -e "-security" | awk -F "/" '{print $1}'
+sudo apt list --upgradable 2>/dev/null | grep -e "-security" | awk -F "/" '{print $1}' | xargs apt install -y
+
+sudo apt list --upgradable 2>/dev/null | grep -e "snapd"
+sudo apt list --upgradable 2>/dev/null | grep -e "snapd" | awk -F "/" '{print $1}' | xargs apt install -y
+
+dnsmasq
+apt
+systemd
+python-apt
+gst-plugins-base1.0
+
+
+
+

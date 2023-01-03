@@ -1,0 +1,85 @@
+- alert: SslCertificateExpiry(<7Days)
+  expr: ssl_verified_cert_not_after{chain_no="0"} - time() < 86400 * 7
+  for: 0m
+  labels:
+    severity: warning
+    prometheus_group: '{{ $externalLabels.prometheus_group }}'
+    runbook: "https://confluence-engineering.dentsuaegis.com/display/GD/Certificate+Renewal"
+  annotations:
+    summary: SSL certificate expiry (< 7 days) (instance {{ $labels.instance }})
+    description: "{{ $labels.instance }} Certificate is expiring in 7 days\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+
+
+webhook_configs:
+    - http_config:
+        bearer_token: 9e1cbfcd546896a9ea8be557caf13a76
+      send_resolved: true
+      url: http://192.168.178.31:3001/root/manual_prometheus/prometheus/alerts/notify.json
+
+
+
+- alert: SslCertificateExpiry(<7Days)
+  expr: ssl_verified_cert_not_after{chain_no="0"} - time() < 86400 * 7
+  for: 0m
+  labels:
+    severity: warning
+    prometheus_group: '{{ $externalLabels.prometheus_group }}'
+    runbook: "https://confluence-engineering.dentsuaegis.com/display/GD/Certificate+Renewal"
+  annotations:
+    summary: SSL certificate expiry (< 7 days) (instance {{ $labels.instance }})
+    description: "{{ $labels.instance }} Certificate is expiring in 7 days\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+
+kubectl exec -it pod-name -- bash
+kubectl exec -it pod-name -c container-name -- bash 
+kubectl exec -it pod_name -n ns_name sh
+
+
+
+
+
+
+*/15 * * * * sh /script/monitor_script/failure_alert.sh PROD-3 >> /dev/null 2>&1
+
+
+groups:
+    - name: ycap
+      rules: 
+        - alert: 
+          expr: systemload_average > 90
+          for: 5s
+          labels:
+            app: ycap
+            severity: critical
+          annotations:
+            summary: "High system load: {{ $value | printf \"%.2f\" }}%"
+
+
+
+receivers:
+  name: 
+  webhook_configs:
+    - http_config:
+        bearer_token: 9e1cbfcd546896a9ea8be557caf13a76
+      send_resolved: true
+      url: http://192.168.178.31:3001/root/manual_prometheus/prometheus/alerts/notify.json
+
+
+
+sudo lsof +L1 | grep '(deleted)' | grep 'dev/shm' | awk '{print $2}' | sudo xargs kill -9
+      
+
+
+- alert: ZookeeperNotOk
+  expr: 
+  for: 0m
+  labels:
+    severity: warning
+  annotations:
+    summary: Zookeeper Not Ok (instance {{ $labels.instance }})
+    description: "Zookeeper instance is not ok\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+
+
+

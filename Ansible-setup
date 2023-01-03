@@ -1,0 +1,45 @@
+> login to master server and install ansible
+    sudo apt update
+    sudo apt install software-properties-common
+    sudo apt-add-repository --yes --update ppa:ansible/ansible
+    sudo apt install ansible
+
+   
+   
+> login to slave server (with putty method)
+> sudo apt-get update (check first if python is install then not required to install these two steps)
+> install python: sudo apt-get install python
+
+-----------now to make keyless ssh possible----------------
+
+> now go to master server and switch into .ssh directory: cd .ssh/
+> look for id_rsa.pub file and if it is not present then create one: ssh-keygen -t rsa
+> run commnad: cat id_rsa.pub
+> copy the code of the file.
+> Now move to slave server and switch to .ssh directory: cd .ssh
+> now edit authorize_key file: sudo nano authorized_keys
+> paste the code inside the authorized_key file
+> now you are able to connect slave server using: ssh <ip_address>
+
+-----------adding slave into Host ---------
+> edit host file of ansible by command: sudo vi /etc/ansible/hosts
+> now add a group using square brackets[]: 
+  example
+  [devops]
+  slave1 ansible_ssh_host=<public ip of your slave server>
+> now check the connection by: ansible -m ping all.
+---------------playbook---------------
+now create one yaml file
+
+
+ - hosts: all
+   name: apache
+   become: true
+   become_method: sudo
+   tasks:
+    - name: install Apache
+      apt: name=apache2 state=latest
+	  
+------------------then run playbook command-----------------
+ansible-playbook file name (eg.ansible-playbook play.yaml)	
+

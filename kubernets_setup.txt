@@ -1,0 +1,502 @@
+------------------Set up Docker----------------
+Step 1: Install Docker
+sudo apt-get update
+sudo apt-get install docker.io
+
+Check the installation and version
+docker ÂÂversion
+
+Step 2: Start and Enable Docker
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo systemctl status docker
+
+_________Step repeat on all the other nodes which we have to connect to master node_____________
+
+----------------------------Install Kubernetes----------------------
+Step 3: Add Kubernetes Signing Key
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+
+If you get an error that curl is not installed, install it with:
+sudo apt-get install curl
+
+______________Then repeat the previous command to install the signing keys. Repeat for each server node.____________
+
+Step 4: Add Software Repositories
+Kubernetes is not included in the default repositories. To add them, enter the following:
+sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+
+Repeat on each server node.
+
+Step 5: Kubernetes Installation Tools
+
+Kubeadm (Kubernetes Admin) is a tool that helps initialize a cluster. It fast-tracks setup by using community-sourced best practices. Kubelet is the work package, which runs on every node and starts containers.
+
+sudo apt-get install kubeadm kubelet kubectl
+sudo apt-mark hold kubeadm kubelet kubectl
+
+Verify the installation with:
+kubeadm version
+
+Repeat for each server node
+
+
+------------------Kubernetes Deployment--------------------
+Step 6: Begin Kubernetes Deployment
+Start by disabling the swap memory on each server:
+sudo swapoff Âa
+
+Step 7: Assign Unique Hostname for Each Server Node 
+Decide which server to set as the master node. Then enter the command:
+sudo hostnamectl set-hostname master-node
+
+Next, set a worker node hostname by entering the following on the worker server:
+sudo hostnamectl set-hostname worker01
+
+Step 8: Initialize Kubernetes on Master Node
+Switch to the master server node, and enter the following:
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+
+Once this command finishes, it will display a kubeadm join message at the end. Make a note of the whole entry. This will be used to join the worker nodes to the cluster.
+
+Next, enter the following to create a directory for the cluster:
+kubernetes-master:~$ mkdir -p $HOME/.kube
+kubernetes-master:~$ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+kubernetes-master:~$ sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Step 9: Deploy Pod Network to Cluster
+A Pod Network is a way to allow communication between different nodes in the cluster. This tutorial uses the flannel virtual network.
+sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+Verify that everything is running and communicating:
+kubectl get pods --all-namespaces
+
+Step 10: Join Worker Node to Cluster
+kubeadm join --discovery-token abcdef.1234567890abcdef --discovery-token-ca-cert-hash sha256:1234..cdef 1.2.3.4:6443   (kubeadm get at the time kubernets initialize command see on step-8 copy and paste on your worker node)
+
+then Switch to the master server, and enter:
+kubectl get nodes    (this command show your all worker node)
+--------------Note (join command generate port so always this port allow in master-node security group)---------------
+
+-------------------------END--------------------------- 
+
+kubectl delete deploy/nginx svc/nginx     delete app which you have to deploy with services run in cluster
+
+---------------------------Deploying NGINX on a Kubernetes Cluster--------------------
+We will run this deployment from the master-node
+
+kubectl get nodes
+create a deployment of NGINX using the NGINX image.
+kubectl create deployment nginx --image=nginx
+
+You can now see the state of your deployment.
+kubectl get deployments 
+kubectl describe deployment nginx 
+kubectl create service nodeport nginx --tcp=80:80
+
+Run the get svc command to see a summary of the service and the ports exposed.
+kubectl get svc
+
+Now you can verify that the Nginx page is reachable on all nodes using the curl command.
+curl node-1:30386
+then heat slave public ip with generate port like 30386
+
+
+
+
+application/deployment.yaml    (file name)
+
+apiVersion: apps/v1                                                                                  
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+kubectl apply -f /application/deployment.yaml
+
+----display info about the deployment----
+kubectl describe deployment nginx-deployment
+
+----List the pods created by the deployment:----
+kubectl get pods -l app=nginx
+
+
+                 
+
+create replicas------------
+kubectl scale deployment.v1.apps/image-processing --replicas=4
+
+sudo docker container ls 
+sudo docker container exec -it 999f67ba29ae env
+
+
+kubectl create secret generic db-user-pass --from-file=./username.txt --from-file=./password.txt
+kubectl create secret generic db-user-pass --from-file=username=./username.txt --from-file=password=./password.t
+
+
+kubectl expose rc  --port=80 --target-port=3000 \
+        --name=sample-load-balancer --type=LoadBalancer 
+
+
+
+kubectl set image deployment/nginx-deployment nginx=nginx:1.16.1 --record   (rollout command)
+
+
+https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balancing
+https://www.digitalocean.com/docs/kubernetes/how-to/add-load-balancers/
+https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/
+
+
+
+https://intellipaat.com/community/4155/ssh-to-aws-instance-without-key-pairs
+
+#successtech
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3ctS8noMTu0nRGZOW6hsI0UJDH1EqwRLCoCnE7wj8TZ0OrF5Eng+4CT9IAF47AZNqoQyuugo7EYlgPIiQpml+Q2BtuzWXDTN+imudViaZ6Tq28kWex8FktIymD+fS8tinC7zkNKUXYRf8S0jiR4qcn+nyke/tbP3lgSBPT8QARJMOHbsuoiUQ0rD54xHFeuLVEGGm098d38r90ypgMucnKonXotNulMTUmjFLc2zFwrOhlKHVzJpQLyB96dcDLbvRTWvM6PaZunrtfDsDrqBkG920/uVEWLVANBqVhPX9pypj8+zEKG/UlmFH0IUhfNy0W3L+9NbuEsObXw8ptwBT succtech-key
+
+
+
+sg-011e1231ca014f419
+subnet-0edc472387613a360,subnet-0129e04c213b45353,subnet-08ccba179fdb8097c,subnet-09d80941c14eda493
+
+s3cmd...
+vpc-0e12532e97dc57f06
+
+
+
+
+
+
+
+
+kubeadm join 172.31.67.90:6443 --token frxf2a.giacgwj52d546m3d \
+    --discovery-token-ca-cert-hash sha256:a2b413d0a03c9c28dcc9c716a1fe66ac9e3cfc90f50f331bdec5ef6fa049f385
+
+
+
+
+
+
+kubectl port-forward --namespace monitor \
+$(kubectl get pods --namespace monitor \
+--selector=app=grafana --output=jsonpath="{.items..metadata.name}") \
+3000
+
+
+
+
+
+helm install stable/prometheus \ --namespace monitoring96 \ --name prometheus
+helm install prometheus-operator stable/prometheus-operator --namespace monitor
+
+kubectl get svc -n kube-system
+kubectl get svc -n namespace name
+kubectl get serviceaccounts -n kube-system
+kubectl delete --all pods --namespace=sanjeet
+kubectl get all -n ishu-prometheus
+kubectl cluster-info
+
+kubectl get validatingwebhookconfigurations.admissionregistration.k8s.io
+kubectl get MutatingWebhookConfiguration
+
+
+sudo docker image tag sanjeetjha96/ubuntu sanjeetjha96/ubuntu
+docker image tag ubuntu sanjeetjha96/ubuntu
+
+
+docker tag 2eb2d388e1a2 sanjeetjha96/ubuntu:firsttry
+sudo docker push sanjeetjha96/ubuntu
+sudo docker push sanjeetjha96/ubuntu:firsttry
+
+
+create image through running container
+1. create image
+docker commint container_id composeimage
+2.check image will come or not for name composeimage
+docker image ls
+3.Tag with latest image which you have to create through container id
+docker tag  latest_image_id sanjeetjha96/composeimage
+4.docker login
+5.docker push sanjeetjha96/composeimage
+
+docker pull ubuntu:18.04
+docker images
+docker tag 4eb8f7c43909 sanjeetjha96/exim4_updated_version:latest
+docker images
+sudo docker push sanjeetjha96/exim4_updated_version
+
+
+
+
+
+
+
+sg-0d4994cba94af270d  
+subnet-0dfcfe218b0a1b12a,subnet-0b2cf2fbda1c6db07,subnet-0c452b89b587ffc45,subnet-0f307e5c84b76d8e5
+vpc-0c64ab7c43a0df1e0
+
+
+eksctl create nodegroup \
+--cluster MyCluster1 \
+--version auto \
+--name standard-nodes \
+--node-type t2.micro \
+--node-ami auto \
+--nodes 2 \
+--nodes-min 1 \
+--nodes-max 3
+
+
+https://managedkube.com/kubernetes/k8sbot/troubleshooting/pending/pod/2019/02/22/pending-pod.html
+
+
+
+AWSAccessKeyId=AKIAIOSVQWW7EZ3D5H6Q 
+AWSSecretKey=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
+
+
+
+
+-cluster ip is static or dyanamic
+-bydefault which type of services generated
+-cluster ip port exposed in backend means target port 80 as compared to nodeport
+-pods are host on worker nodes
+-pods particular nodes me host ho skti
+-
+release version 16 
+why require to upgrade cluster rel version
+because in some relese some yaml of version,manifest is not suported
+like /v1beta1 replace to apps/v1 api version so if i have 100 of yaml file then we have to edit manually so for automation purpose we have to update your cluster release version
+
+
+kubectl config set-context arn:aws:eks:us-west-2:079385137208:cluster/EKSCluster --namespace=sanjeet-new
+
+
+
+Deployment is a resource to deploy a stateless application, if using a PVC, all replicas will be using the same Volume and none of it will have its own state.
+
+Statefulsets is used for Stateful applications, each replica of the pod will have its own state, and will be using its own Volume.
+
+DaemonSet is a controller that ensures that the pod runs on all the nodes of the cluster. If a node is added/removed from a cluster, DaemonSet automatically adds/deletes the pod.
+long running backgroud process
+
+kubectl cluster-info
+kubectl api-versions
+
+-------------logs check commands-----------------
+kubectl logs Pod_name
+kubectl -n ns-name logs pod-name
+kubectl logs pod_name -c container-name (if we have multiple container in pods)
+kubectl logs pod_name -n default > ishu.txt
+kubectl logs my-pod --tail=10
+
+------------show container details within a pods----------
+kubectl exec pod-name -- ls
+kubectl exec -it pod-name -- bash
+kubectl exec -it pod-name -c container-name -- bash (go to particular container)
+kubectl exec -it pod_name -n ns_name sh
+
+kubectl get pod memory-demo --output=yaml --namespace=mem-size
+
+
+
+helm install nginx-ingress ingress-nginx/ingress-nginx --namespace ingress-basic --set controller.replicaCount=2 --set controller.nodeSelector."beta\.kubernetes\.io/os"=linux --set defaultBackend.nodeSelector."beta\.kubernetes\.io/os"=linux
+
+
+
+normal nginx - dep,ser,pod, rs stateless app
+grafana - statefull
+replicaset - for routing purpose where traffic will be rotate which condiction fall in memory,cpu if condition fail go tonext pods basically divided load
+
+
+az aks get-versions --location eastus --output table
+
+
+
+
+export KUBECONFIG="/home/federation_kubeconfig:/home/federation_one_kubeconfig"
+
+
+
+az aks get-credentials --resource-group ownsg --name owncluster
+
+
+max unav
+min avb
+
+jaise hmare cluster ke under 4 nodes usme bht sare pods chal rhe or hmare nodes ki tahas-nahas ho rkhi hai mtlb memory,cpu relatd issue aa rhi to hm disruption pod budget ke help max unav,min avb lga ke ye condn lga skte ki hamare 10 pod hi loss jae taki hm wo pod ko dusre worker node pe switch kr skte
+
+
+
+Taints And Tolerations
+-relation between pod and nodes
+-it means which pods are placed/schedule which nodes
+-taint and toleration nothing to do for security on the cluster so taint and toleration are use to set what pod are schedule on a nodes
+-now take an eg there have 3 nodes on the cluster and 3 pods are created the kubernetes scheduler try to placed these pods on available nodes
+-taint means those node we have specify as a taint there have no pod schedule for these node so in this case we have specify particulary which pod is placed on taint specify nodes (so in this case toleration is also happen because we have specify particular pod)
+-Taint is a set of nodes and tolerations is a set of pods
+-three taint effect
+1. NoSchedule - which means the pods is no schedule on the nodes
+2. PreferNoSchedule - which means the system is trying to avoiding placing a pod into the nodes
+3. NoExecute - which means new pod is not schedule on the node
+kubectl taint nodes ip-172-31-12-206.us-west-2.compute.internal key1=value1:NoSchedule (tainted command)
+kubectl taint nodes ip-172-31-12-206.us-west-2.compute.internal key1=value1:NoSchedule- (untainted command)
+
+#####################restart pod within a deployment file##############################
+kubectl rollout restart deployment_name
+kubectl rollout restart deploy(to restart all pods)
+kubectl scale deploy --replicas=0 --all (scale all within a ns)
+kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=ip-10-162-207-210.eu-west-2.compute.internal(command to show all pods with a node)
+helm get values prometheus -a -o yaml
+kubectl get secrets
+kubectl get secret rel1-prometheus-grafana -o yaml(show username n password)
+kubectl edit secret rel1-prometheus-grafana -o yaml
+kubectl get event -n ns_name
+
+kubectl --namespace sanjeet create service nodeport --tcp=8080:80 sann
+
+
+
+aws sts get-caller-identity
+
+
+
+aws eks --region us-east-1 update-kubeconfig --name vincent-stg
+
+kubectl top pods --all-namespaces -o wide --field-selector spec.nodeName=ip-10-162-207-210.eu-west-2.compute.internal
+
+
+userawsindia@gmail.com
+
+cluster binding,role binding
+pod security policy(bydefault set on kubernetes infra)
+ingress & engress rule(to stop pod communication within a cluster)
+
+
+
+
+
+
+
+mongodump --host tvstack01-prd-mongodb-rs-mongodb-replicaset-0-prd.svc.cluster.local:27017 --username tvstack01-stg --password fskjVCYTJUJHK --db tvstack --out /home/ishuka.sharma/dump
+
+
+
+
+mongodump --host rs0/tvstack01-prd-mongodb-rs-mongodb-replicaset-0.tvstack01-prd-mongodb-rs-mongodb-replicaset.tvstack01-prd.svc.cluster.local:27017,tvstack01-prd-mongodb-rs-mongodb-replicaset-1.tvstack01-prd-mongodb-rs-mongodb-replicaset.tvstack01-prd.svc.cluster.local:27017,tvstack01-prd-mongodb-rs-mongodb-replicaset-2.tvstack01-prd-mongodb-rs-mongodb-replicaset.tvstack01-prd.svc.cluster.local:27017 --username tvstack01-stg --password fskjVCYTJUJHK --db tvstack --out /Users/ashish/Documents/dump/governance/tvstackdump
+
+
+mongodump --host rs0/tvstack01-prd-mongodb-rs-mongodb-replicaset-0.tvstack01-prd-mongodb-rs-mongodb-replicaset.tvstack01-prd.svc.cluster.local:27017 --username tvstack01-stg --password fskjVCYTJUJHK --db tvstack --out /tmp/mongo_20220202
+
+helm init --client-only --skip-refresh
+helm repo remove stable
+helm repo add stable https://charts.helm.sh/stable
+helm install rel1-prometheus stable/prometheus-operator --namespace monitor
+
+
+helm list --all --all-namespaces
+helm uninstall <release-name> -n <namespace>
+helm uninstall <release-name> -n <namespace> --no-hooks
+kubectl get clusterrolebinding
+helm repo ls
+helm get all release-name
+helm get values release-prometheus -a -o yaml > values.yaml
+helm upgrade -f values.yaml release-prometheus stable/prometheus-operator
+echo -n "cHJvbS1vcGVy" | base64 --decode
+echo -n "YWRtaW4x" | base64 --decode
+md5sum
+kubectl get componentstatus
+kubectl get pod --watch
+
+
+helm lint test
+helm install --dry-run --debug test/ --generate-name
+
+export NODE_PORT=$(kubectl get --namespace test -o jsonpath="{.spec.ports[0].nodePort}" services example-test-rel-name)
+export NODE_IP=$(kubectl get nodes --namespace test -o jsonpath="{.items[0].status.addresses[0].address}")
+echo http://$NODE_IP:$NODE_PORT
+
+kubectl get pods -n abac01-develop| grep Evicted | awk '{print $1}' | xargs kubectl delete pod -n abac01-develop
+kubectl get pods -n ns-name| grep Evicted | awk '{print $1}' | xargs kubectl delete pod -n ns-name
+kubectl get pods --no-headers=true |grep -v "Running" | grep -v "Pending" | sed -E 's/([a-z0-9-]+).*/\1/g' | xargs kubectl delete pod
+
+-----------------Pod-label-troubleshooting----------------------
+ImagePullbackOff -- alpine image not pulled so check using kubectl describe command
+
+CrashLoopBackOff -- means pod just starting,stopping in loop so main reason is restart policy(never) it should be always not never
+1. always check for debug using kubectl describe pod_name command
+2. kubectl logs pod_name
+
+Pod in pending state -- check nodeselector label(eg. memoryoptimized: yes)for scheduler to scheduled the pod or not
+1. always check for debug using kubectl describe command
+kubectl labels nodes node-name momeryoptimized=yes
+
+Application on Pod Failing
+This issue is application label not cluster label so check logs using kubectl logs pod_name -c container_name
+
+
+
+
+THE CORE COMPONENTS OF K8S ARE:
+
+1.etcd saves the state of the entire cluster
+2.kube-apiserver provides only entry for resource operations, and provides mechanisms such as authentication, authorization, access control, API registration and discovery
+3.kube-controller-manager is responsible for maintaining the state of the cluster, such as failure detection, automatic scaling, rolling update, .etc
+4.kube-scheduler is responsible for resource scheduling
+5.kubelet is responsible for maintaining the life cycle of the container, and management of volume and network
+6.Container runtime is responsible for image management and real operation of Pods and containers
+7.kube-proxy is responsible for providing service discovery and load balancing within the cluster for services
+
+8.Helm Tiller acted as an intermediary between users and the Kubernetes API server, and handled role-based access control (RBAC) and the rendering of Helm charts for deployment to the cluster.that lives inside your Kubernetes cluster that is responsible to perform patches and changes to resources you ask to manage.
+
+9.Sidecar containers are containers that are needed to run alongside the main container. The two containers share resources like pod storage and network interfaces. The sidecar containers can also share storage volumes with the main containers, allowing the main containers to access the data in the sidecars. The main and sidecar containers also share the pod network, and the pod containers can communicate with each other on the same network using localhost or the pod’s IP, due to reducing latency between them.
+
+Headless service is a regular Kubernetes service where the spec.clusterIP is explicitly set to "None" and spec.type is set to "ClusterIP". Instead, SRV records are created for all the named ports of service's endpoints.
+
+headless service 
+ingress controller
+endpoint controller
+
+-------------------Access-Modes-for-pv-pvc----------------------------
+ReadWriteOnce â the volume can be mounted as read-write by a single node
+ReadOnlyMany â the volume can be mounted read-only by many nodes
+ReadWriteMany â the volume can be mounted as read-write by many nodes
+
+
+kubectl config set-context --current --namespace=gke-connect
+kubectl config use-context gke_plucky-tempo-362212_us-central1-b_private-cluster-2
+kubectl config use-context gke_plucky-tempo-362212_europe-west1-b_private-cluster-1
+kubectl get mci
+kubectl get mci -n whereami
+kubectl edit mci/whereami-ingress -n whereami
+
+
+
+
+This Error means you are not in exact user of cluster merge:
+Error: INSTALLATION FAILED: Kubernetes cluster unreachable: Get "http://localhost:8080/version": dial tcp 127.0.0.1:8080: connect: connection refused
+
+
+Deployments are used for stateless applications, StatefulSets for stateful applications. for stateless The pods in a deployment are interchangeable, whereas the pods in a StatefulSet are not. Deployments require a service to enable interaction with pods, while a headless service handles the pods' network ID in StatefulSets.
+Stateless means there have no any state means pod restart,rs increase there have no changes so it is dynamic also change the pod ips but in stateulset there have pod ip change basically uses headless service it bind the pod ip so it is static.
+
+
+
+With a Headless Service, clients can connect to it's pods by connecting to the service's DNS name. But using headless services, DNS returns the pod's IPs and client can connect directly to the pods instead via the service proxy.
+
+
+
+

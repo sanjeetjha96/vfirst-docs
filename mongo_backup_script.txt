@@ -1,0 +1,61 @@
+log_file=/scripts/db-backup/logs/mongo_backup.log
+MONGO_HOST="172.31.20.227"
+MONGO_PORT="17901"
+MONGO_DATABASE="surbo_chat"
+MONGO_USERNAME="surbochat"
+MONGO_PASSWORD="Ct!v4a361)S3b"
+yyear=`date -d "1 days ago" +"%Y"`
+mmonth=`date -d "1 days ago" +"%m"`
+
+
+#export MONGO_PORT="18709" #default mongo port
+#export MONGO_USERNAME="botplatform" #mongo db user name
+#export MONGO_PASSWORD="Sb01!m9VF1c)s" #mongo db password
+#set backup path where to store db dump
+BACKUP_DIR="/database-dump/mongo/"
+BACKUP_FOLDER="mongo_`date +%d%m%Y-%H%M%S`"
+#LASTDATE3=$(date +%d%m%Y --date='3 day ago')
+
+#set mongo dump path command
+MONGODUMP_PATH="/usr/bin/mongodump"
+
+# AWS backup config
+#AWS_S3_BACKUP_PATH="backups/mongo/"
+
+# Create BACKUP_PATH directory if it does not exist
+#[ ! -d "$BACKUP_DIR" ] && mkdir -p $BACKUP_DIR
+
+echo "<<<<-----------------Starting Mongo Backup------------->>>>>>>>>>>>>>>" >> $log_file
+# check if backup dir exists,
+if [ -d "$BACKUP_DIR" ]; then
+    # move to folder where to take backup
+    cd $BACKUP_DIR
+    echo "<<<<----Taking backup Mongo DB:$MONGO_HOST:$MONGO_PORT:$MONGO_DATABASE" >> $log_file
+    #take mongo dump
+$MONGODUMP_PATH  --host $MONGO_HOST --port $MONGO_PORT -d $MONGO_DATABASE -u $MONGO_USERNAME -p $MONGO_PASSWORD --out $BACKUP_FOLDER >> /dev/null
+    #check if mongodb dump sucessfully
+    if [ -d $BACKUP_FOLDER ]; then
+        tar -zcvf $BACKUP_FOLDER.tar.gz $BACKUP_FOLDER
+        if [ -f "$BACKUP_FOLDER.tar.gz" ]; then
+#            echo "====>>>>Uploading dbs backup files to s3 bucket:$AWS_BUCKET_NAME and s3 path:$AWS_S3_BACKUP_PATH" >> $log_file
+#            aws s3 cp $BACKUP_FOLDER.tar.gz s3://$AWS_BUCKET_NAME/$AWS_S3_BACKUP_PATH >> $log_file
+                /usr/bin/s3cmd put $BACKUP_FOLDER.tar.gz  s3://ace-prod-db-backup/surbo-chat/Mongodb/$yyear/$mmonth/
+           # Remove the backup folder,as tar file would exist on server
+            echo "==>>Removing backup folder from server and keeping tar file in tmp folder" >> $log_file
+            rm -rf $BACKUP_FOLDER
+        else
+            echo "==>>failed to generate tar file" >> $log_file
+                fi
+#        echo "==>>Mongo dump named:$BACKUP_FOLDER is completed" >> $log_file
+    else
+        echo "==>>Failed to backup mongo" >> $log_file
+    fi
+else
+    echo "==>>Failed to create backup path:$BACKUP_DIR" >> $log_file
+fi
+
+#cd /database-backup/mongo
+#rm -f mongo_$LASTDATE3-000001.tar.gz
+#rm -f mongo_$LASTDATE3-000002.tar.gz
+
+echo "<<<<<<<----------------Ending Mongo Backup----------------->>>>>>>>>>>>>>>>>"  >>  $log_file

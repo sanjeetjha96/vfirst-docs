@@ -1,0 +1,137 @@
+----------------KSA-REDIS-UPGRADE------------------------
+1. TAKE REDIS CONF & DATA BACKUP FOR BOTH
+redis-cli -h 192.168.10.4 -p 7817
+192.168.10.4:7817>save
+
+redis-cli -h 192.168.10.4 -p 6389
+192.168.10.4:6389>auth ace-redis@PR0D2#@!
+192.168.10.4:6389>save
+
+cp -r /etc/redis/* /home/sanjeet/
+cp -r /var/lib/redis/dump.rdb /home/sanjeet/dump.rdb_7817
+cp -r /var/lib/redis_6389/dump.rdb /home/sanjeet/dump.rdb_6389                             
+
+2. NOW UPGRADE REDIS TO 7.0.3
+sudo add-apt-repository ppa:redislabs/redis
+sudo apt update
+
+3. UPDATE CONF
+update conf for 7817
+Update in vi /etc/redis/redis.conf
+supervised systemd
+protected-mode no
+
+update conf for 6389
+update in vi /etc/redis/redis_ace_livechat.conf
+supervised systemd
+
+sudo apt-get install redis
+
+4. NOW RESTART BOTH SERVICES
+systemctl restart redis
+systemctl restart redis2.service
+
+5. CHECK
+redis-cli -h 192.168.10.4 -p 7817
+192.168.10.4:7817>keys *
+
+redis-cli -h 192.168.10.4 -p 6389
+192.168.10.4:6389>auth ace-redis@PR0D2#@!
+192.168.10.4:6389>keys *
+
+
+
+
+
+----------------ME-REDIS-UPGRADE------------------------
+1. TAKE REDIS CONF & DATA BACKUP FOR BOTH
+redis-cli -h 10.1.26.67 -p 7817
+10.1.26.67:7817>save
+
+redis-cli -h 10.1.26.67 -p 6389
+10.1.26.67:6389> auth ace-redis@PR0D2#@!
+10.1.26.67:6389>save
+
+cp -r /etc/redis/* /home/sanjeet/
+cp -r /var/lib/redis/dump.rdb /home/sanjeet/dump.rdb_7817
+cp -r /var/lib/redis_6389/dump.rdb /home/sanjeet/dump.rdb_6389                             
+
+2. NOW UPGRADE REDIS TO 7.0.3
+sudo add-apt-repository ppa:redislabs/redis
+sudo apt update
+
+3. UPDATE CONF
+update conf for 7817
+Update in vi /etc/redis/redis.conf
+supervised systemd
+protected-mode no
+
+update conf for 6389
+update in vi /etc/redis/redis_ace_livechat.conf
+supervised systemd
+
+sudo apt-get install redis
+
+4. NOW RESTART SERVICE
+systemctl restart redis
+
+5. CHECK
+redis-cli -h 10.1.26.67 -p 7817
+10.1.26.67:7817>keys *
+
+redis-cli -h 10.1.26.67 -p 6389
+10.1.26.67:6389> auth ace-redis@PR0D2#@!
+10.1.26.67:6389>keys *
+
+
+------------------CLIENT1---------------------
+redis-cli -h 172.31.1.2 -p 6379
+172.31.1.2:6379>save
+
+cp -r /etc/redis/* /home/sanjeet.jha/
+cp -r /var/lib/redis/* /home/sanjeet/jha/
+NOW UPGRADE REDIS TO 7.0.3
+sudo add-apt-repository ppa:redislabs/redis
+sudo apt update
+
+3. UPDATE CONF
+Update in vi /etc/redis/redis.conf
+supervised systemd
+protected-mode no
+
+sudo apt-get install redis
+
+4. NOW RESTART SERVICE
+systemctl restart redis
+
+redis-cli -h 172.31.1.2 -p 6379
+172.31.1.2:6379> keys *
+172.31.1.2:6379>info replication    to check replication status
+
+
+
+SLAVE-CLIENT2
+
+cp -r /etc/redis/* /home/sanjeet.jha/
+cp -r /var/lib/redis/* /home/sanjeet/jha/
+
+NOW UPGRADE REDIS TO 7.0.3
+sudo add-apt-repository ppa:redislabs/redis
+sudo apt update
+
+3. UPDATE CONF
+Update in vi /etc/redis/redis.conf
+supervised systemd
+protected-mode no
+
+sudo apt-get install redis
+
+4. NOW RESTART SERVICE
+systemctl restart redis
+
+redis-cli -h 172.31.17.156 -p 6379
+172.31.17.156:6379> info keys
+172.31.17.156:6379> info replication   to check replication status
+
+
+

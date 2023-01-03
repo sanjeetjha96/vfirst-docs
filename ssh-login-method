@@ -1,0 +1,40 @@
+sudo ssh -p 2291 -i sanjeet-key.pem ubuntu@13.126.240.254
+sudo ssh -p 2291 sanjeet@13.126.240.252
+sudo ssh -i sanjeet-key.pem ubuntu@13.126.240.253
+
+
+sudo rm /var/lib/apt/lists/lock
+
+copy file from local to remote
+
+sudo scp -r /home/sanjeetjha/aws ishuka@54.202.69.246:/home/ishuka
+sudo scp /home/sanjeetjha/awscliv2.zip ishuka@54.202.69.246:/home/ishuka
+sudo scp /home/sanjeetjha/mykey.pem ubuntu@54.202.69.246:/home/ubuntu/         (for ubuntu user change passwd because at the  time of transfer data from local to remote ask ubuntu passwd)
+
+transfer file from remote to local (command will run in local machine)
+
+sudo scp ubuntu@54.202.69.246:/home/ubuntu/ishika_cnf /home/sanjeetjha/  (/home/ubuntu/ishika_cnf is remote path means pick file from source and destination is /home/sanjeetjha/  where copy these file)
+
+copy file from remote to remote server
+sudo scp /home/ubuntu/deployment.yaml ubuntu@35.161.200.28:/home/ubuntu
+sudo scp -r /home/ubuntu/doks-monitoring ubuntu@35.161.200.28:/home/ubuntu
+
+
+
+
+
+##########################################RSync############################################################
+sudo apt install rsync
+rsync -zvh google-cloud-sdk-325.0.0-linux-x86_64.tar.gz /tmp/backups/  (using this cmd create a dir /tmp/backups/ using rsync and copy file)
+
+rsync -avzh /home/ubuntu/sann1/ /tmp/backups/     (usig this command copy sann1 file to /tmp/backups)
+
+make keyless using keygen for both remote machine then copy id_rsa.pub key and paste one to another within authorized_keys
+rsync -avz /tmp/backups/ ubuntu@3.92.26.70:/home/ubuntu/
+
+
+
+
+
+
+sudo scp -r -P 2291 -i sanjeet-key.pem /tmp/strike/ ubuntu@3.235.43.107:/tmp

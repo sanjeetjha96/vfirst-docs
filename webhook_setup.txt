@@ -1,0 +1,37 @@
+mkdir -p /scripts/monitor_script
+vi webhook_alert.sh
+
+##########################
+#!/bin/bash
+
+webhook_url="https://valuefirst.webhook.office.com/webhookb2/0d13cb5f-c4b1-4674-899b-749a7820c5b8@dd58fdca-ddf7-4ca1-b5a4-e3a1d6e19191/IncomingWebhook/eb8d2aebcbd645a7b5910249e477755d/e189d7f5-cfa4-4e76-af6d-4062a4431691"
+
+message=$1
+call_webhook()
+{
+
+message=$1
+cmd="import pymsteams;myTeamsMessage = pymsteams.connectorcard('$webhook_url');myTeamsMessage.text('$message');myTeamsMessage.send()"
+python2 -c "$cmd"
+#echo "$cmd"
+#template_message=$(echo "Message:-=========="$message | sed -e "s/%20/ /g")
+#echo "$template_message"
+}
+call_webhook "$1"
+###########################
+chmod 755 webhook_alert.sh
+
+apt install python-pip
+pip install pymsteams
+
+Alternate
+
+apt install python3-pip
+pip3 install pymsteams
+
+cd /usr/bin/
+ln -s /scripts/monitor_script/webhook_alert.sh webhook_alert
+
+Check its work or not
+
+webhook_alert name_of_env(server)

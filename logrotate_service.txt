@@ -1,0 +1,140 @@
+AUDITD
+/var/log/audit/audit.log {
+    su root root
+    daily
+    dateext
+    missingok
+    notifempty
+    sharedscripts
+    rotate 30
+    compress
+    delaycompress
+    postrotate
+        /bin/systemctl kill -s USR1 auditd.service >/dev/null 2>&1 || true
+    endscript
+}
+
+
+
+/app-log/chatbot_api_v2/*.log
+{
+su root root
+daily
+dateext 
+rotate 10
+compress
+missingok
+notifempty
+create 0777 www-data www-data
+sharedscripts
+}
+
+
+/var/log/syslog
+{
+        su root root
+	rotate 10
+	daily
+        dateext
+	missingok
+	notifempty
+	delaycompress
+	compress
+	postrotate
+		/usr/lib/rsyslog/rsyslog-rotate
+	endscript
+}
+
+/var/log/mail.info
+/var/log/mail.warn
+/var/log/mail.err
+/var/log/mail.log
+/var/log/daemon.log
+/var/log/kern.log
+/var/log/auth.log
+/var/log/user.log
+/var/log/lpr.log
+/var/log/cron.log
+/var/log/debug
+/var/log/messages
+{
+        su root root        
+	rotate 12
+	weekly
+        dateext
+	missingok
+	notifempty
+	compress
+	delaycompress
+	sharedscripts
+	postrotate
+		/usr/lib/rsyslog/rsyslog-rotate
+	endscript
+}
+
+
+/var/log/nginx/*.log {
+	daily
+	missingok
+	rotate 14
+	compress
+	delaycompress
+	notifempty
+	create 0640 www-data adm
+	sharedscripts
+	prerotate
+		if [ -d /etc/logrotate.d/httpd-prerotate ]; then \
+			run-parts /etc/logrotate.d/httpd-prerotate; \
+		fi \
+	endscript
+	postrotate
+		invoke-rc.d nginx rotate >/dev/null 2>&1
+	endscript
+}
+
+
+/var/log/redis/redis-server*.log {
+        weekly
+        missingok
+        rotate 12
+        compress
+        notifempty
+}
+
+
+/var/log/mysql/*log {
+	daily
+	rotate 10
+	missingok
+	create 640 mysql adm
+	compress
+	sharedscripts
+	postrotate
+		test -x /usr/bin/mysqladmin || exit 0
+		# If this fails, check debian.conf! 
+		MYADMIN="/usr/bin/mysqladmin --defaults-file=/etc/mysql/debian.cnf"
+		if [ -z "`$MYADMIN ping 2>/dev/null`" ]; then
+		  # Really no mysqld or rather a missing debian-sys-maint user?
+		  # If this occurs and is not a error please report a bug.
+		  #if ps cax | grep -q mysqld; then
+		  if killall -q -s0 -umysql mysqld; then
+ 		    exit 1
+		  fi 
+		else
+		  $MYADMIN flush-logs
+		fi
+	endscript
+}
+
+
+/var/log/mongodb/*.log {
+       daily
+       dateext
+       rotate 30
+       copytruncate
+       delaycompress
+       compress
+       notifempty
+       missingok
+}
+

@@ -1,0 +1,39 @@
+apt-get install -y libnl-genl-3-200
+dpkg -i falcon-sensor_6.16.0-11307_amd64.deb
+/opt/CrowdStrike/falconctl -s --cid=6F3A0CF07D8344B18356705A8D82DFC4-11
+
+/opt/CrowdStrike/falconctl -s -f --tags="sn-riy-ksa,Deploy,Jenkins,Cloud,APP,Deploy-jenkins"
+
+systemctl start falcon-sensor
+systemctl enable falcon-sensor
+
+sudo /opt/CrowdStrike/falconctl -g --version
+
+
+
+Step-1)
+# /usr/local/nagios/etc
+
+in nrpe.cfg file 
+ 
+command[check_falcon]=/usr/local/nagios/libexec/falconCheck.sh
+ 
+Step-2)
+make a file -- "vim /usr/local/nagios/libexec/falconCheck.sh"
+
+#!/bin/bash
+chkrow=`ps -ef|grep -i "crowdstrike"|grep -v "grep"|wc -l`
+if [ $chkrow -eq 0 ]
+then
+echo "Falcon process is not running."
+exit 2;
+
+else
+        echo "Falcon process is working."
+exit 0;
+
+fi
+ 
+ 
+Step -3) chmod 755 falconCheck.sh
+Step -4) systemctl restart nrpe.service

@@ -1,0 +1,16 @@
+wget https://mirrors.estointernet.in/apache//jmeter/binaries/apache-jmeter-5.4.zip
+unzip apache-jmeter-5.4.zip
+cd apache-jmeter-5.4/
+./jmeter
+wget https://jmeter-plugins.org/get/ -O /home/ubuntu/apache-jmeter-5.4/lib/ext/jmeter-plugins-manager.jar
+ls -ltrh /home/ubuntu/apache-jmeter-5.4/lib/ext/
+wget https://repo1.maven.org/maven2/kg/apc/cmdrunner/2.2/cmdrunner-2.2.jar -P /home/ubuntu/apache-jmeter-5.4/lib/
+ls -ltrh /home/ubuntu/apache-jmeter-5.4/lib/
+java -cp /home/ubuntu/apache-jmeter-5.4/lib/ext/jmeter-plugins-manager.jar org.jmeterplugins.repository.PluginManagerCMDInstaller
+/home/ubuntu/apache-jmeter-5.4/bin/./PluginsManagerCMD.sh install jpgc-webdriver
+
+ 
+
+FOR TESTING
+cd apache-jmeter-5.4/bin/
+sh jmeter.sh -n -t /home/ubuntu/web_bot_load_test_script.jmx -l /home/ubuntu/result/test_web_results.jtl

@@ -1,0 +1,80 @@
+1.      Install RabbitMQ with Erlang
+ 
+
+sudo apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
+
+sudo apt-get install apt-transport-https
+
+sudo tee /etc/apt/sources.list.d/bintray.rabbitmq.list <<EOF
+
+deb http://dl.bintray.com/rabbitmq-erlang/debian bionic erlang
+deb https://dl.bintray.com/rabbitmq/debian bionic main
+
+EOF
+
+sudo apt-get update
+sudo apt-get install -y erlang-base erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key erlang-runtime-tools erlang-snmp erlang-ssl erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
+
+# import PackageCloud signing key
+wget -O - "https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey" | sudo apt-key add –
+sudo apt-get install rabbitmq-server
+
+#Create config file
+ cd /etc/rabbitmq/
+sudo vi /etc/rabbitmq/rabbitmq-env.conf
+
+ 
+
+# Defaults to rabbit. This can be useful if you want to run more than one node
+
+# per machine - RABBITMQ_NODENAME should be unique per erlang-node-and-machine
+
+# combination. See the clustering on a single machine guide for details:
+
+# http://www.rabbitmq.com/clustering.html#single-machine
+
+#NODENAME=rabbit
+
+ 
+
+# By default RabbitMQ will bind to all interfaces, on IPv4 and IPv6 if
+
+# available. Set this if you only want to bind to one network interface or#
+
+# address family.
+
+NODE_IP_ADDRESS=192.168.10.4
+
+ 
+
+# Defaults to 5672.
+
+NODE_PORT=5392
+
+sudo systemctl restart rabbitmq-server
+
+sudo systemctl enable rabbitmq-server
+
+      
+
+   sudo rabbitmqctl add_user ocr-surbo "Otgp@56Py56#"
+
+   sudo rabbitmqctl set_user_tags ocr-surbo administrator
+
+   sudo rabbitmqctl set_permissions -p / ocr-surbo "." "." ".*"
+
+   sudo rabbitmq-plugins enable rabbitmq_management
+   rabbit@vl312159-app01-pd-ocr-surbo-aws-mum-in-vf
+ 
+sudo systemctl restart rabbitmq-server
+ sudo rabbitmqctl status | grep "RabbitMQ\|rabbitmq" (check rabbitmq version)
+
+
+
+then add host in /etc/hosts (on those server which have to communicate)
+
+
+MeUat RabbitMq Credentials:
+ User : meuat-surbo
+ Password : Otgp@56PylT6#
+

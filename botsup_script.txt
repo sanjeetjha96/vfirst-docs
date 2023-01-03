@@ -1,0 +1,300 @@
+monitor_502.sh    (file name....)
+
+#!/bin/bash
+file=$1
+webhook_url="https://outlook.office.com/webhook/c4a50068-3ccc-4707-bf45-c2c55a5b29bc@dd58fdca-ddf7-4ca1-b5a4-e3a1d6e19191/IncomingWebhook/b9c6801bc49d4de4b7f6d0f2af1f1$
+
+call_webhook()
+{
+
+    message=$1
+    cmd="import pymsteams;myTeamsMessage = pymsteams.connectorcard('$webhook_url');myTeamsMessage.text('$message');myTeamsMessage.send()"
+    python3 -c "$cmd"
+    echo "$cmd"
+    template_message=$(echo "Message:-=========="$message | sed -e "s/%20/ /g")
+    echo "$template_message"
+}
+
+send_email()
+{
+    SUBJECT=$1
+    MESSAGE=$2
+    message="$SUBJECT: $MESSAGE"
+    call_webhook $message
+}
+
+
+if [ -f /var/log/nginx/$file-access.log ]
+then
+
+error_file="/scripts/monitor_script/errorcounts_$1.log"
+last_min=`date --date '-1 min' '+%Y-%m-%dT%R'`
+error=`cat /var/log/nginx/$file-access.log|grep -i "$last_min"|awk '{print $6}'|cut -d"=" -f2|grep -e "500" -e "502" -e "503" -e "504"> $error_file`
+error_count=`cat $error_file|wc -l`
+#error_count=20
+
+error500=`cat $error_file|grep -wc "500"`
+error502=`cat $error_file|grep -wc "502"`
+error503=`cat $error_file|grep -wc "503"`
+error504=`cat $error_file|grep -wc "504"`
+#error503=`cat $error_file|grep -wc "200"`
+#error_count=20
+        if [ $error_count -gt 10 ]
+          then
+                currenttime=`date +%Y-%m-%d" "%T`
+#               sendSMS "Prod -4 getting error 500/502/503 ($error_count) in $file-access.log. time -$currenttime"
+#               echo "-----------------------------------------Prod 4----------------------------------" > $email_file
+#                echo "" >>$email_file
+#               echo " Getting Error 500/502/503 in /var/log/nginx/$file-access.log file." >> $email_file
+                call_webhook "Dream11-Prod-1: Found 500 - $error500 , 502 - $error502 , 503 - $error503 , 504 - $error504 counts in last 1 minute.Log file - $file-acce$
+  #              cat $email_file|/usr/bin/mail -s "Surbo BOT|India Problem Alert - $currenttime" dev-surbo@vfirst.com  -a 'From: monitor.502@vfirst.com'
+
+
+      # echo "Prod 4"|/usr/bin/mail -s "Nginx Error-$currenttime" dev-surbo@vfirst.com -a 'From: monitor.502@vfirst.com'
+          else
+                        currenttime=`date +%Y-%m-%d" "%T`
+                  echo "$currenttime | Not found 502/503 in $file-access.log file" >>/scripts/monitor_script/502.log
+
+        fi
+else
+
+call_webhook "On Dream11-prod-1 : logfile $file-access.log does not exist."
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+supervisor_monitor.sh(file name)
+
+
+#!/bin/bash
+#monitor script for mongo mysql elastic search and dicsk space
+#*/5 * * * *  sh  /home/ubuntu/monitor_script/supervisor_monitor.sh prod-server-1 >> /var/log/monitor_log/monitor_script.log
+
+# every 5 minutes
+SERVER_NAME=$1
+PROD_SERVER_DOMAIN=$2
+LOG_FILES_PATH=/scripts/services_name.txt
+AWS_ACCESS_KEY=""
+AWS_SECRET_KEY=""
+ERROR_FILE_LAST_LINE_COUNT=50
+EMAIL_SUBJECT="$SERVER_NAME Production Issue"
+EMAIL_TO="dev-surbo@vfirst.com"
+EMAIL_FROM="Production Issue on $SERVER_NAME<support@surbo.io>"
+now=$(TZ="Asia/Kolkata" date)
+
+####DB CHECK
+elastic_search_pid_file_path=/var/run/elasticsearch/elasticsearch.pid
+elastic_search_ip=http://chatbot-elasticsearch.partner.dream11.local:9200
+MYSQL_USER_NAME=chatbotinfradmin
+MYSQL_USER_PASSWORD=80Wf98oFqIF901Oq4vdr1022
+MONGO_USER_NAME=botplatform
+MONGO_PASSWORD=Tm01m9Cr1c2
+DB_SERVER_PRIVATE_IP_Mongo=chatbot-mongo.partner.dream11.local
+###########
+
+
+
+
+
+
+
+webhook_url="https://outlook.office.com/webhook/c4a50068-3ccc-4707-bf45-c2c55a5b29bc@dd58fdca-ddf7-4ca1-b5a4-e3a1d6e19191/IncomingWebhook/b9c6801bc49d4de4b7f6d0f2af1f1$
+
+call_webhook()
+{
+
+    message=$1
+cmd="import pymsteams;myTeamsMessage = pymsteams.connectorcard('$webhook_url');myTeamsMessage.text('$message');myTeamsMessage.send()"
+    python3 -c "$cmd"
+    echo "$cmd"
+    template_message=$(echo "Message:-=========="$message | sed -e "s/%20/ /g")
+    echo "$template_message"
+}
+
+
+check_disk_space()
+{
+
+df -H | grep -vE '^Filesystem|tmpfs|cdrom' | awk '{ print $5 " " $1 }' | while read output;
+do
+  usep=$(echo $output | awk '{ print $1}' | cut -d'%' -f1  )
+  partition=$(echo $output | awk '{ print $2 }' )
+#  usep=95
+  if [ $usep -ge 90 ]; then
+    message="Running out of space $partition $usep percent on $(hostname)  ${HOSTNAME} $SERVER_NAME @$(date)"
+    call_webhook "$message"
+  fi
+done
+
+}
+
+get_log_file_name()
+{
+    service_name=$1
+    grep -w $service_name $LOG_FILES_PATH  |awk '{ print $1 " " $2 " " $3}' |  while read output;
+    do
+        echo "$output"
+    done
+}
+check_file_last_modified_time()
+{
+    service_name=$1
+    file_info=$( get_log_file_name $service_name )
+    file_name=$(echo $file_info | awk '{ print $2 }' )
+    expected_modified_time=$(echo $file_info | awk '{ print $3 }' )
+    CURTIME=$(date +%s)
+    FILETIME=$(stat $file_name -c %Y)
+TIMEDIFF=$(expr $CURTIME - $FILETIME)
+    echo "File $file_name and last modified $TIMEDIFF seconds ago and excepted $expected_modified_time seconds"
+    if [ $TIMEDIFF -gt $expected_modified_time ]; then
+        echo "Email sent..."
+       file_get_last_line_mail "$service_name log file is not updated last $expected_modified_time seconds on $SERVER_NAME.Last modified $TIMEDIFF seconds ago" $servic$
+    fi
+}
+
+
+file_get_last_line_mail()
+{
+    subject=$1
+    service_name=$2
+    file_info=$( get_log_file_name $service_name )
+    file_name=$(echo $file_info | awk '{ print $2 }' )
+    last_lines=$(tail -n $ERROR_FILE_LAST_LINE_COUNT $file_name | while read output;
+    do
+        echo "$output"
+    done)
+    send_email "$subject" "Service name is:-$service_name and log file path is:-$file_name and last log error:-\n $last_lines"
+}
+
+check_supervisor_service()
+{
+    supervisorctl status | while read output;
+    do
+      process_name=$(echo $output | awk '{ print $1}'  )
+      status=$(echo $output | awk '{ print $2 }' )
+      pid=$(echo $output | awk '{ print $4 }' )
+      uptime=$(echo $output | awk '{ print $6 }' )
+      if [ "$status" != "RUNNING" ]; then
+           message="On $SERVER_NAME ${HOSTNAME} @ $now $output "
+           template_message=$(echo $message | sed -e "s/ /%20/g")
+           call_webhook "$message"
+           file_get_last_line_mail "$process_name is not running and current status is $status on $SERVER_NAME" $process_name
+      else
+            echo "Process name :- $process_name, pid is $pid, uptime is $uptime and status is $status "
+            #check_file_last_modified_time $process_name
+      fi
+    done
+}
+
+
+send_email()
+{
+    SUBJECT=$1
+    MESSAGE=$2
+    message="$SUBJECT: $MESSAGE"
+    call_webhook $message
+}
+
+check_health_check()
+{
+     curl --write-out '%{http_code}\n' --silent --output /dev/null "$PROD_SERVER_DOMAIN/health-check/" |  while read output;
+     do
+         echo "current status is $output"
+         if [ "$output" != "200" ]; then
+            message="$SERVER_NAME health check fail. $SERVER_NAME @ $now"
+            echo $message
+            call_webhook "$message"
+
+         fi
+     done
+
+}
+
+####Mysql Check##########
+check_mysql_status()
+{
+    mysqladmin  -h chatbot-rds-writer.partner.dream11.local -u$MYSQL_USER_NAME -p$MYSQL_USER_PASSWORD processlist 2>&1 > /dev/null ###user should have mysql permission$
+    RESULT=$?
+    if [ $RESULT -ne 0 ]; then
+        message="Mysql is down $now"
+        template_message=$(echo $message | sed -e "s/ /%20/g")
+#        send_sms $template_message
+        call_webhook "$message"
+    else
+         echo "Mysql is running. $now";
+    fi
+}
+check_mysql_connected_thread()
+{
+    mysqladmin -h chatbot-rds-writer.partner.dream11.local -u$MYSQL_USER_NAME -p$MYSQL_USER_PASSWORD  processlist | wc -l | while read output;
+    do
+        if [ $output -ge 50 ]; then
+            message="Mysql connected thread is $output at  $now"
+            template_message=$(echo $message | sed -e "s/ /%20/g")
+#            send_sms $template_message
+             call_webhook "$message"
+        else
+             echo "Mysql connected thread is $output at  $now";
+        fi
+    done
+
+}
+
+check_mongo_status()
+{
+    mongo $DB_SERVER_PRIVATE_IP_Mongo:27017/botplatform -u$MONGO_USER_NAME -p$MONGO_PASSWORD --eval "db.stats()" 2>&1 > /dev/null  # do a simple harmless command of so$
+
+    RESULT=$?   # returns 0 if mongo eval succeeds
+
+    if [ $RESULT -ne 0 ]; then
+        message="Mongo is down $now"
+        template_message=$(echo $message | sed -e "s/ /%20/g")
+#        send_sms $template_message
+         call_webhook "$message"
+    else
+         echo "Mongo is running. $now";
+    fi
+
+}
+check_elastic_search_status()
+{
+
+    # Check that Elasticsearch is running
+    curl -s $elastic_search_ip 2>&1 > /dev/null
+    if [ $? != 0 ]; then
+        message="Unable to contact Elasticsearch on url $elastic_search_ip $now"
+        template_message=$(echo $message | sed -e "s/ /%20/g")
+
+ #       send_sms $template_message
+        call_webhook "$message"
+    else
+           echo "Elastic Search running. $now"
+    fi
+
+}
+
+## header
+echo "Service status on ${HOSTNAME} @ $now"
+echo "------------------------------------------------------"
+check_supervisor_service
+check_disk_space
+check_health_check
+check_mysql_status
+check_mysql_connected_thread
+check_mongo_status
+check_elastic_search_status
+
+
+
+

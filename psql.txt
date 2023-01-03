@@ -1,0 +1,26 @@
+docker exec -it e3 bash
+psql -Usentry
+\c postgres
+SELECT  schemaname,   relname as "Table",   pg_size_pretty(pg_total_relation_size(relid)) As " table_Size",   pg_size_pretty(pg_total_relation_size(relid) - pg_relation_size(relid)) as "External Size"   FROM pg_catalog.pg_statio_user_tables ORDER BY pg_total_relation_size(relid) DESC;
+
+delete from nodestore_node where timestamp < '2022-08-20';
+
+delete from nodestore_node where timestamp < '2022-08-20'
+VACUUM FULL VERBOSE nodestore_node;
+
+delete from sentry_messagefiltervalue where last_seen < '2022-09-20';
+VACUUM FULL VERBOSE sentry_messagefiltervalue;
+
+delete from sentry_eventmapping where date_added < '2022-08-20';
+VACUUM FULL VERBOSE sentry_eventmapping;
+
+delete from sentry_eventtag where date_added < '2022-08-20';
+VACUUM FULL VERBOSE sentry_eventtag;
+
+delete from sentry_message where datetime < '2022-08-20';
+VACUUM FULL VERBOSE sentry_message;
+
+delete from sentry_grouprulestatus where date_added < '2022-08-20';
+VACUUM FULL VERBOSE sentry_grouprulestatus;
+
+

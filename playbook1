@@ -1,0 +1,62 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  vars_files:
+    - vault.yaml
+  tasks:
+    - name: Create Users
+      user:
+        name: "{{ item }}"
+        password: "{{ my_password | password_hash('sha512') }}"
+        shell: /bin/bash
+
+
+
+      loop:
+        - prod_jenkins
+
+
+    - name: ansible set permission recursvely for a directory
+      become: true
+      file:
+        path: /app-log
+        path: /app
+        state: directory
+        mode: "u=rwx"
+        recurse: yes
+    - name: install supervisor
+      apt: name=supervisor state=latest
+
+    - name: install logwatch
+      apt: name=logwatch state=latest
+
+    - name: install auditd
+      apt: name=auditd state=latest
+
+    - name: install nginx
+      apt: name=nginx state=latest
+
+    - name: install gdb
+      apt: name=gdb state=latest
+
+    - name: adding redis repo from PPA
+      apt_repository:
+        repo: ppa:chris-lea/redis-server
+    - name: install redis-server
+      apt: name=redis-server state=latest
+
+    - name: install virtualenv
+      apt: name=virtualenv state=latest
+
+    - name: install mysql-client
+      apt: name=mysql-client state=latest
+    - name: install mysql-server
+      apt: name=mysql-server state=latest
+
+    - name: install bc
+      apt: name=bc state=latest
+
+    - name: install dc
+      apt: name=dc state=latest
+
